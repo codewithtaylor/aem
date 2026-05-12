@@ -759,6 +759,58 @@
     font-style: italic;
   }
 
+  /* ── COMPARISON ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .compare-model {
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+
+  .compare-what {
+    font-size: 0.875rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.55;
+  }
+
+  .compare-but {
+    font-size: 0.825rem;
+    color: var(--faint);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .compare-aem {
+    grid-column: 1 / -1;
+    border-left: 3px solid rgba(0,0,0,0.15);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  [data-theme="dark"] .compare-aem {
+    border-left-color: rgba(255,255,255,0.15);
+  }
+
+  .compare-strength {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    font-style: italic;
+  }
+
   /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
@@ -786,6 +838,8 @@
     .hero { padding: 60px 1rem 50px; }
     .formula-strip { padding: 0 1rem; }
     .nav-links { display: none; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .compare-aem { grid-column: 1; border-left: 3px solid rgba(0,0,0,0.15); border-radius: 0 var(--radius) var(--radius) 0; }
   }
 </style>
 </head>
@@ -799,6 +853,7 @@
       <li><a href="#scale">Scale</a></li>
       <li><a href="#history-section">History</a></li>
       <li><a href="#about">About</a></li>
+      <li><a href="#comparison">Compare</a></li>
     </ul>
   </div>
   <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
@@ -982,8 +1037,42 @@
       <p>Effectiveness = (Suitability + Real Outcome + Sustainability) ÷ 3. Each pillar is scored 0–100. The average gives you a single, clear effectiveness percentage.</p>
     </div>
     <div class="about-note">
-      <h3>A note on judgement</h3>
-      <p>AEM does not aim for absolute classification — it aims for realistic assessment built on your own experience. It can be applied to healthy habits, study methods, productivity approaches, and even personal relationships. Flexibility is at its core, making it suitable for any age or lifestyle.</p>
+      <h3>What makes AEM different</h3>
+      <p>It does not demand perfection — instead, it opens the door to three questions: <em>"Does this suit me?"</em> <em>"Can I sustain it?"</em> <em>"Did this create a real difference?"</em> It does not provide ready-made judgments, but invites a calm internal dialogue. It does not depend on the results of others, but on your understanding of yourself and your personal experience.</p>
+    </div>
+    <div class="about-note">
+      <h3>The value</h3>
+      <p>The question shifts from <em>"Did I achieve?"</em> to <em>"Did this truly fit me?"</em> It connects satisfaction, consistency, and real impact without putting you in a race with others. Suitable for anyone seeking to live honestly with themselves and grow in their own way. It may not be a standard for everyone — but from the beginning, it was meant to be a voice for those who could not find themselves within the standards of others.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section" id="comparison">
+  <div class="section-label">Context</div>
+  <h2 class="section-title">AEM vs global models</h2>
+  <p class="section-intro">Despite the many global models used to measure success and behaviour, many of them lack the human and personal dimension. Below is a comparison showing how AEM differs — not only in form, but in the very essence of effectiveness itself.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-model">SMART Goals</div>
+      <p class="compare-what">A method for setting goals with clarity and logic. It focuses on implementation after planning.</p>
+      <p class="compare-but">Suitable for planning — does not deeply account for the human dimension.</p>
+    </div>
+    <div class="compare-card">
+      <div class="compare-model">KPI — Key Performance Indicators</div>
+      <p class="compare-what">Numerical indicators used to measure progress.</p>
+      <p class="compare-but">Provides a clear reading for institutions and systems — does not fully understand the human being.</p>
+    </div>
+    <div class="compare-card">
+      <div class="compare-model">RE-AIM</div>
+      <p class="compare-what">A comprehensive framework for evaluating major projects.</p>
+      <p class="compare-but">Strong and systematic — not integrated with everyday life experiences.</p>
+    </div>
+    <div class="compare-card compare-aem">
+      <div class="compare-model">AEM — Aryam's Effectiveness Metric</div>
+      <p class="compare-what">A behavioral evaluation model that measures the effectiveness of daily behaviour through its impact and sustainability. Focuses on the relationship between action and outcome within a personal context — far from numerical indicators or institutional standards.</p>
+      <p class="compare-strength">It is not merely a development of previous systems, but a transformation in the way understanding itself is approached: from numbers to impact, and from institutional standards to individual experience. AEM does not claim superiority over global models — it offers a compassionate invitation to rethink how success is measured, and how genuine effectiveness can exist even when it cannot be turned into measurable indicators.</p>
     </div>
   </div>
 </section>
