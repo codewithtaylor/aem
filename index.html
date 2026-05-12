@@ -6,7 +6,16 @@
 <title>AEM — Aryam's Effectiveness Metric</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  (function() {
+    const saved = localStorage.getItem('aem_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,21 +39,36 @@
     --ideal: #2471a3;
     --ideal-bg: #eef5fc;
 
-    --accent: #1a1917;
     --radius: 16px;
     --radius-sm: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #111110;
+    --surface: #1c1b19;
+    --surface2: #252422;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0ede8;
+    --muted: #9b9890;
+    --faint: #6b6860;
+
+    --failed-bg: #2a1514;
+    --limited-bg: #2a1c0d;
+    --moderate-bg: #272310;
+    --effective-bg: #0f2419;
+    --ideal-bg: #0d1e2a;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'EB Garamond', Georgia, serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    font-size: 17px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: "liga" 1, "kern" 1;
+    transition: background 0.2s, color 0.2s;
   }
 
   /* ── NAV ── */
@@ -60,13 +84,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: background 0.2s;
+  }
+
+  [data-theme="dark"] nav {
+    background: rgba(17, 17, 16, 0.9);
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
   }
 
   .nav-logo {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--text);
     text-decoration: none;
   }
@@ -80,12 +115,34 @@
   .nav-links a {
     text-decoration: none;
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     font-weight: 400;
     transition: color 0.2s;
   }
 
   .nav-links a:hover { color: var(--text); }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .theme-toggle svg { width: 15px; height: 15px; }
 
   /* ── HERO ── */
   .hero {
@@ -97,7 +154,7 @@
 
   .hero-eyebrow {
     display: inline-block;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -110,11 +167,10 @@
   }
 
   .hero h1 {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: clamp(2.8rem, 6vw, 4.2rem);
-    font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 700;
     line-height: 1.1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.04em;
     margin-bottom: 1.5rem;
     color: var(--text);
   }
@@ -122,13 +178,13 @@
   .hero h1 em {
     font-style: italic;
     color: var(--muted);
-    font-weight: 400;
+    font-weight: 600;
   }
 
   .hero-desc {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     color: var(--muted);
-    max-width: 560px;
+    max-width: 520px;
     margin: 0 auto 2.5rem;
     font-weight: 400;
     line-height: 1.7;
@@ -139,19 +195,18 @@
     align-items: center;
     gap: 8px;
     background: var(--text);
-    color: #fff;
+    color: var(--bg);
     text-decoration: none;
-    padding: 14px 28px;
+    padding: 13px 26px;
     border-radius: 100px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 0.875rem;
+    font-weight: 600;
     letter-spacing: 0.01em;
     transition: transform 0.2s, opacity 0.2s;
   }
 
   .hero-cta:hover { transform: translateY(-1px); opacity: 0.9; }
-
-  .hero-cta svg { width: 16px; height: 16px; }
+  .hero-cta svg { width: 15px; height: 15px; }
 
   /* ── FORMULA STRIP ── */
   .formula-strip {
@@ -164,7 +219,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 2rem 2.5rem;
+    padding: 1.75rem 2.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -173,7 +228,7 @@
   }
 
   .formula-label {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -182,23 +237,24 @@
   }
 
   .formula-text {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 500;
     color: var(--text);
+    letter-spacing: -0.01em;
   }
 
   .formula-pillars {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
   .pillar {
     border: 1px solid var(--border);
     border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 0.9rem;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 500;
     color: var(--muted);
     background: var(--bg);
   }
@@ -211,7 +267,7 @@
   }
 
   .section-label {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -220,18 +276,18 @@
   }
 
   .section-title {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: clamp(1.7rem, 3.5vw, 2.3rem);
-    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
     line-height: 1.2;
     margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.03em;
   }
 
   .section-intro {
     color: var(--muted);
     font-weight: 400;
-    max-width: 560px;
+    font-size: 0.95rem;
+    max-width: 540px;
     margin-bottom: 2.5rem;
     line-height: 1.7;
   }
@@ -239,8 +295,8 @@
   /* ── CALCULATOR ── */
   #calculator .calc-grid {
     display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 20px;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
     align-items: start;
   }
 
@@ -252,15 +308,15 @@
   }
 
   .card-title {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 1.25rem;
     color: var(--text);
-    letter-spacing: 0.01em;
   }
 
   .field-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
     color: var(--muted);
     margin-bottom: 6px;
     display: block;
@@ -272,11 +328,11 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px 14px;
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1rem;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.875rem;
     color: var(--text);
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s;
     resize: none;
   }
 
@@ -284,11 +340,14 @@
     border-color: rgba(0,0,0,0.25);
   }
 
+  [data-theme="dark"] input[type="text"]:focus,
+  [data-theme="dark"] textarea:focus {
+    border-color: rgba(255,255,255,0.25);
+  }
+
   textarea { min-height: 72px; }
 
-  .rating-block {
-    margin-top: 1.25rem;
-  }
+  .rating-block { margin-top: 1.25rem; }
 
   .rating-header {
     display: flex;
@@ -298,21 +357,20 @@
   }
 
   .rating-name {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text);
   }
 
   .rating-help {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--faint);
     margin-bottom: 8px;
     line-height: 1.4;
-    font-style: italic;
   }
 
   .rating-value {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--muted);
     min-width: 32px;
@@ -333,7 +391,6 @@
     background: var(--surface2);
     outline: none;
     cursor: pointer;
-    transition: background 0.3s;
   }
 
   input[type="range"]::-webkit-slider-thumb {
@@ -346,15 +403,13 @@
     transition: transform 0.15s;
   }
 
-  input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
 
   .number-input {
-    width: 56px;
+    width: 54px;
     text-align: center;
     padding: 6px 8px;
-    font-size: 0.9rem;
+    font-size: 0.825rem;
   }
 
   /* Result card */
@@ -369,47 +424,47 @@
   }
 
   .score-number {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 4.8rem;
-    font-weight: 500;
+    font-size: 4.5rem;
+    font-weight: 700;
     line-height: 1;
     color: var(--text);
     transition: color 0.4s;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
   }
 
   .score-label-text {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--faint);
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .category-pill {
     display: inline-block;
     border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
     margin: 12px 0 0;
     transition: background 0.4s, color 0.4s;
   }
 
-  .cat-failed .category-pill { background: var(--failed-bg); color: var(--failed); }
-  .cat-limited .category-pill { background: var(--limited-bg); color: var(--limited); }
-  .cat-moderate .category-pill { background: var(--moderate-bg); color: var(--moderate); }
-  .cat-effective .category-pill { background: var(--effective-bg); color: var(--effective); }
-  .cat-ideal .category-pill { background: var(--ideal-bg); color: var(--ideal); }
+  .cat-failed .category-pill  { background: var(--failed-bg);   color: var(--failed); }
+  .cat-limited .category-pill { background: var(--limited-bg);  color: var(--limited); }
+  .cat-moderate .category-pill{ background: var(--moderate-bg); color: var(--moderate); }
+  .cat-effective .category-pill{background: var(--effective-bg);color: var(--effective); }
+  .cat-ideal .category-pill   { background: var(--ideal-bg);    color: var(--ideal); }
 
-  .cat-failed .score-number { color: var(--failed); }
-  .cat-limited .score-number { color: var(--limited); }
+  .cat-failed .score-number   { color: var(--failed); }
+  .cat-limited .score-number  { color: var(--limited); }
   .cat-moderate .score-number { color: var(--moderate); }
-  .cat-effective .score-number { color: var(--effective); }
-  .cat-ideal .score-number { color: var(--ideal); }
+  .cat-effective .score-number{ color: var(--effective); }
+  .cat-ideal .score-number    { color: var(--ideal); }
 
   .progress-bar-wrap {
-    height: 6px;
+    height: 5px;
     background: var(--surface2);
     border-radius: 3px;
     overflow: hidden;
@@ -423,39 +478,37 @@
     background: var(--text);
   }
 
-  .cat-failed .progress-bar-fill { background: var(--failed); }
+  .cat-failed .progress-bar-fill  { background: var(--failed); }
   .cat-limited .progress-bar-fill { background: var(--limited); }
-  .cat-moderate .progress-bar-fill { background: var(--moderate); }
-  .cat-effective .progress-bar-fill { background: var(--effective); }
-  .cat-ideal .progress-bar-fill { background: var(--ideal); }
+  .cat-moderate .progress-bar-fill{ background: var(--moderate); }
+  .cat-effective .progress-bar-fill{background: var(--effective); }
+  .cat-ideal .progress-bar-fill   { background: var(--ideal); }
 
   .helper-text {
-    font-size: 0.9rem;
+    font-size: 0.825rem;
     color: var(--muted);
     text-align: center;
     line-height: 1.5;
-    min-height: 40px;
+    min-height: 38px;
     padding: 0 0.5rem;
-    font-style: italic;
   }
 
   .btn-save {
     width: 100%;
     border: none;
     border-radius: var(--radius-sm);
-    padding: 13px;
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1rem;
+    padding: 12px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
     cursor: pointer;
     margin-top: 1.25rem;
     transition: opacity 0.2s, transform 0.15s;
     background: var(--text);
-    color: #fff;
+    color: var(--bg);
   }
 
-  .btn-save:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-save:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn-save:not(:disabled):hover { opacity: 0.85; transform: translateY(-1px); }
 
   .btn-reset {
@@ -463,9 +516,10 @@
     border: 1px solid var(--border);
     background: transparent;
     border-radius: var(--radius-sm);
-    padding: 11px;
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 0.95rem;
+    padding: 10px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.825rem;
+    font-weight: 500;
     color: var(--muted);
     cursor: pointer;
     margin-top: 8px;
@@ -480,11 +534,11 @@
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
     background: var(--text);
-    color: #fff;
+    color: var(--bg);
     padding: 10px 20px;
     border-radius: 100px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.825rem;
+    font-weight: 600;
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -497,11 +551,11 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* ── SCALE SECTION ── */
+  /* ── SCALE ── */
   .scale-grid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .scale-row {
@@ -512,40 +566,40 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 14px 18px;
+    padding: 13px 18px;
   }
 
   .scale-range {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.825rem;
+    font-weight: 600;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
 
   .scale-desc {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     color: var(--text);
   }
 
   .scale-badge {
-    font-size: 0.78rem;
-    font-weight: 500;
+    font-size: 0.72rem;
+    font-weight: 600;
     padding: 4px 12px;
     border-radius: 100px;
     white-space: nowrap;
   }
 
-  .badge-failed { background: var(--failed-bg); color: var(--failed); }
-  .badge-limited { background: var(--limited-bg); color: var(--limited); }
+  .badge-failed   { background: var(--failed-bg);   color: var(--failed); }
+  .badge-limited  { background: var(--limited-bg);  color: var(--limited); }
   .badge-moderate { background: var(--moderate-bg); color: var(--moderate); }
-  .badge-effective { background: var(--effective-bg); color: var(--effective); }
-  .badge-ideal { background: var(--ideal-bg); color: var(--ideal); }
+  .badge-effective{ background: var(--effective-bg);color: var(--effective); }
+  .badge-ideal    { background: var(--ideal-bg);    color: var(--ideal); }
 
   /* ── HISTORY ── */
   #history-section .history-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .history-item {
@@ -554,41 +608,39 @@
     border-radius: var(--radius);
     padding: 1.25rem 1.5rem;
     display: grid;
-    grid-template-columns: 80px 1fr auto;
+    grid-template-columns: 72px 1fr auto;
     gap: 1rem;
     align-items: center;
     transition: border-color 0.2s;
   }
 
   .history-item:hover { border-color: rgba(0,0,0,0.15); }
+  [data-theme="dark"] .history-item:hover { border-color: rgba(255,255,255,0.12); }
 
-  .history-score {
-    text-align: center;
-  }
+  .history-score { text-align: center; }
 
   .history-score-num {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1.9rem;
-    font-weight: 500;
+    font-size: 1.75rem;
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.03em;
   }
 
   .history-meta h3 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 4px;
   }
 
   .history-meta p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--faint);
   }
 
   .history-notes {
     margin-top: 4px;
-    font-style: italic;
     color: var(--muted);
+    font-style: italic;
   }
 
   .history-delete {
@@ -598,7 +650,7 @@
     color: var(--faint);
     padding: 6px;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.875rem;
     transition: color 0.15s, background 0.15s;
     line-height: 1;
   }
@@ -614,14 +666,14 @@
     background: var(--surface);
   }
 
-  .empty-state-icon { font-size: 2rem; margin-bottom: 0.75rem; }
-  .empty-state p { font-size: 0.95rem; }
+  .empty-state-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 0.875rem; line-height: 1.6; }
 
   /* ── ABOUT ── */
   .about-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 
   .about-card {
@@ -632,36 +684,40 @@
   }
 
   .about-card .card-icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 0.75rem;
   }
 
   .about-card h3 {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
   }
 
   .about-card p {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     color: var(--muted);
     line-height: 1.65;
   }
 
   .about-note {
-    margin-top: 16px;
+    margin-top: 4px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 3px solid rgba(0,0,0,0.15);
+    border-left: 3px solid rgba(0,0,0,0.12);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     padding: 1.25rem 1.5rem;
     grid-column: 1 / -1;
   }
 
+  [data-theme="dark"] .about-note {
+    border-left-color: rgba(255,255,255,0.12);
+  }
+
   .about-note h3 {
-    font-size: 0.78rem;
-    font-weight: 500;
+    font-size: 0.72rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--faint);
@@ -669,7 +725,7 @@
   }
 
   .about-note p {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     color: var(--muted);
     line-height: 1.65;
     font-style: italic;
@@ -680,7 +736,7 @@
     border-top: 1px solid var(--border);
     padding: 2rem;
     text-align: center;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--faint);
   }
 
@@ -691,9 +747,7 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
-    #calculator .calc-grid {
-      grid-template-columns: 1fr;
-    }
+    #calculator .calc-grid { grid-template-columns: 1fr; }
     .result-card { position: static; }
     .about-grid { grid-template-columns: 1fr; }
     .scale-row { grid-template-columns: 80px 1fr; }
@@ -703,19 +757,23 @@
     .section { padding: 0 1rem 60px; }
     .hero { padding: 60px 1rem 50px; }
     .formula-strip { padding: 0 1rem; }
+    .nav-links { display: none; }
   }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="#">AEM</a>
-  <ul class="nav-links">
-    <li><a href="#calculator">Evaluate</a></li>
-    <li><a href="#scale">Scale</a></li>
-    <li><a href="#history-section">History</a></li>
-    <li><a href="#about">About</a></li>
-  </ul>
+  <div class="nav-left">
+    <a class="nav-logo" href="#">AEM</a>
+    <ul class="nav-links">
+      <li><a href="#calculator">Evaluate</a></li>
+      <li><a href="#scale">Scale</a></li>
+      <li><a href="#history-section">History</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
 </nav>
 
 <section class="hero">
@@ -749,9 +807,8 @@
   <p class="section-intro">Rate each pillar 0–100 and get an instant AEM score. Save it to your history when you're done.</p>
 
   <div class="calc-grid">
-    <!-- Inputs -->
     <div>
-      <div class="card" style="margin-bottom:16px;">
+      <div class="card" style="margin-bottom:12px;">
         <div class="card-title">What are you evaluating?</div>
         <label class="field-label" for="title-input">Habit / behaviour name</label>
         <input type="text" id="title-input" placeholder="e.g. Morning cold shower">
@@ -800,9 +857,8 @@
       </div>
     </div>
 
-    <!-- Result -->
     <div class="card result-card" id="result-card">
-      <div class="score-display" id="score-display">
+      <div class="score-display">
         <div class="score-number" id="score-num">50%</div>
         <div class="score-label-text">Effectiveness score</div>
         <div class="category-pill" id="cat-pill">Moderate</div>
@@ -907,11 +963,11 @@
   const STORAGE_KEY = 'aem_history_v1';
 
   const catData = {
-    failed:    { label: 'Failed',    full: 'Failed / Unsuitable',                   help: "This method doesn't suit your situation.",       cls: 'cat-failed' },
-    limited:   { label: 'Limited',   full: 'Limited (not recommended as primary)',   help: 'Limited impact — not a primary option.',          cls: 'cat-limited' },
-    moderate:  { label: 'Moderate',  full: 'Moderately useful (needs support)',       help: 'Decent, but needs additional support.',           cls: 'cat-moderate' },
-    effective: { label: 'Effective', full: 'Effective (good commitment option)',      help: 'A strong choice to commit to.',                   cls: 'cat-effective' },
-    ideal:     { label: 'Ideal',     full: 'Ideal (maintain long-term)',              help: 'Excellent — maintain long-term consistency.',     cls: 'cat-ideal' },
+    failed:    { label: 'Failed',    full: 'Failed / Unsuitable',                  help: "This method doesn't suit your situation.",      cls: 'cat-failed' },
+    limited:   { label: 'Limited',   full: 'Limited (not recommended as primary)',  help: 'Limited impact — not a primary option.',         cls: 'cat-limited' },
+    moderate:  { label: 'Moderate',  full: 'Moderately useful (needs support)',      help: 'Decent, but needs additional support.',          cls: 'cat-moderate' },
+    effective: { label: 'Effective', full: 'Effective (good commitment option)',     help: 'A strong choice to commit to.',                  cls: 'cat-effective' },
+    ideal:     { label: 'Ideal',     full: 'Ideal (maintain long-term)',             help: 'Excellent — maintain long-term consistency.',    cls: 'cat-ideal' },
   };
 
   function getCategory(score) {
@@ -931,7 +987,28 @@
       .replace(/'/g, '&#39;');
   }
 
-  // Slider sync
+  // ── Theme toggle ──
+  const moonSVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg>`;
+  const sunSVG  = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/></svg>`;
+
+  const toggleBtn = document.getElementById('theme-toggle');
+
+  function applyThemeIcon() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    toggleBtn.innerHTML = dark ? sunSVG : moonSVG;
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('aem_theme', next);
+    applyThemeIcon();
+  });
+
+  applyThemeIcon();
+
+  // ── Slider sync ──
   function syncPair(slider, numInput, valSpan) {
     slider.addEventListener('input', () => {
       const v = parseInt(slider.value);
@@ -958,28 +1035,16 @@
     });
   }
 
-  syncPair(
-    document.getElementById('suit-slider'),
-    document.getElementById('suit-num'),
-    document.getElementById('suit-val')
-  );
-  syncPair(
-    document.getElementById('out-slider'),
-    document.getElementById('out-num'),
-    document.getElementById('out-val')
-  );
-  syncPair(
-    document.getElementById('sus-slider'),
-    document.getElementById('sus-num'),
-    document.getElementById('sus-val')
-  );
+  syncPair(document.getElementById('suit-slider'), document.getElementById('suit-num'), document.getElementById('suit-val'));
+  syncPair(document.getElementById('out-slider'),  document.getElementById('out-num'),  document.getElementById('out-val'));
+  syncPair(document.getElementById('sus-slider'),  document.getElementById('sus-num'),  document.getElementById('sus-val'));
 
   const titleInput = document.getElementById('title-input');
   titleInput.addEventListener('input', update);
 
   function getScore() {
-    const s = parseInt(document.getElementById('suit-slider').value);
-    const o = parseInt(document.getElementById('out-slider').value);
+    const s  = parseInt(document.getElementById('suit-slider').value);
+    const o  = parseInt(document.getElementById('out-slider').value);
     const su = parseInt(document.getElementById('sus-slider').value);
     return Math.round((s + o + su) / 3);
   }
@@ -989,17 +1054,14 @@
     const cat = getCategory(score);
     const d = catData[cat];
     const resultCard = document.getElementById('result-card');
-    const allCats = ['cat-failed','cat-limited','cat-moderate','cat-effective','cat-ideal'];
-    allCats.forEach(c => resultCard.classList.remove(c));
+    ['cat-failed','cat-limited','cat-moderate','cat-effective','cat-ideal'].forEach(c => resultCard.classList.remove(c));
     resultCard.classList.add(d.cls);
 
     document.getElementById('score-num').textContent = score + '%';
     document.getElementById('cat-pill').textContent = d.label;
     document.getElementById('helper-text').textContent = d.help;
     document.getElementById('progress-fill').style.width = score + '%';
-
-    const hasTitle = titleInput.value.trim().length > 0;
-    document.getElementById('btn-save').disabled = !hasTitle;
+    document.getElementById('btn-save').disabled = titleInput.value.trim().length === 0;
   }
 
   document.getElementById('btn-reset').addEventListener('click', () => {
@@ -1013,7 +1075,7 @@
     update();
   });
 
-  // History
+  // ── History ──
   function loadHistory() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
     catch { return []; }
@@ -1031,15 +1093,15 @@
       return;
     }
     container.innerHTML = items.map((item, i) => {
-      const cat = getCategory(item.score);
-      const d = catData[cat];
-      const date = new Date(item.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+      const cat   = getCategory(item.score);
+      const d     = catData[cat];
+      const date  = new Date(item.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
       const title = escapeHTML(item.title);
       const notes = item.notes ? escapeHTML(item.notes) : '';
       return `<div class="history-item">
         <div class="history-score ${d.cls}">
           <div class="history-score-num" style="color:var(--${cat})">${item.score}%</div>
-          <span class="scale-badge badge-${cat}" style="font-size:0.72rem;padding:3px 9px;">${d.label}</span>
+          <span class="scale-badge badge-${cat}" style="font-size:0.68rem;padding:3px 9px;margin-top:5px;display:inline-block;">${d.label}</span>
         </div>
         <div class="history-meta">
           <h3>${title}</h3>
@@ -1063,14 +1125,13 @@
   document.getElementById('btn-save').addEventListener('click', () => {
     const title = titleInput.value.trim();
     if (!title) return;
-    const score = getScore();
     const item = {
       title,
       notes: document.getElementById('notes-input').value.trim(),
-      suitability: parseInt(document.getElementById('suit-slider').value),
-      outcome: parseInt(document.getElementById('out-slider').value),
-      sustainability: parseInt(document.getElementById('sus-slider').value),
-      score,
+      suitability:   parseInt(document.getElementById('suit-slider').value),
+      outcome:       parseInt(document.getElementById('out-slider').value),
+      sustainability:parseInt(document.getElementById('sus-slider').value),
+      score: getScore(),
       createdAt: Date.now()
     };
     const items = loadHistory();
