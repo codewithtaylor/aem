@@ -185,10 +185,12 @@
     font-size: 1.05rem;
     color: var(--muted);
     max-width: 520px;
-    margin: 0 auto 2.5rem;
+    margin: 0 auto 1.5rem;
     font-weight: 400;
     line-height: 1.7;
   }
+
+  .hero-desc em { font-style: italic; color: var(--text); font-weight: 500; }
 
   .hero-cta {
     display: inline-flex;
@@ -207,6 +209,32 @@
 
   .hero-cta:hover { transform: translateY(-1px); opacity: 0.9; }
   .hero-cta svg { width: 15px; height: 15px; }
+
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .hero-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--faint);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px 12px;
+  }
+
+  .hero-quote {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--faint);
+    letter-spacing: 0.01em;
+  }
 
   /* ── FORMULA STRIP ── */
   .formula-strip {
@@ -779,11 +807,18 @@
 <section class="hero">
   <span class="hero-eyebrow">Aryam's Effectiveness Metric</span>
   <h1>How effective is<br><em>your habit, really?</em></h1>
-  <p class="hero-desc">AEM scores any behaviour 0–100 across three pillars: suitability, real outcome, and sustainability. Honest numbers, realistic decisions.</p>
+  <p class="hero-desc">A personal evaluation tool that measures how well any habit, method, or behaviour actually works — for <em>you</em>. Based on your own experience, not popular opinion.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Healthy habits</span>
+    <span class="hero-tag">Study methods</span>
+    <span class="hero-tag">Productivity</span>
+    <span class="hero-tag">Personal relationships</span>
+  </div>
   <a href="#calculator" class="hero-cta">
     Start evaluating
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
   </a>
+  <p class="hero-quote">"Success is not by luck — success is by fit."</p>
 </section>
 
 <div class="formula-strip">
@@ -929,32 +964,32 @@
     <div class="about-card">
       <div class="card-icon">📐</div>
       <h3>Suitability</h3>
-      <p>How well the habit or behaviour fits your personality, physical condition, lifestyle, and actual needs. A method that works for others may not suit you at all.</p>
+      <p>How well the method aligns with your personality, physical condition, lifestyle, and specific needs. What works for most people may not work for you — and that's the point.</p>
     </div>
     <div class="about-card">
       <div class="card-icon">📈</div>
       <h3>Real Outcome</h3>
-      <p>The actual improvement you noticed after applying the behaviour — not what you hoped for, but what genuinely happened. Honesty here is what makes AEM useful.</p>
+      <p>The actual change or improvement you noticed after applying the behaviour. Not what you hoped for — what genuinely happened. Honest self-assessment is what makes AEM useful.</p>
     </div>
     <div class="about-card">
       <div class="card-icon">🔁</div>
       <h3>Sustainability</h3>
-      <p>How easy it is to repeat the behaviour without external pressure, burnout, or forcing it. Long-term consistency matters more than short bursts of effort.</p>
+      <p>How consistently you can repeat this behaviour without pressure or exhaustion. Long-term commitment matters far more than short-lived bursts of effort.</p>
     </div>
     <div class="about-card">
       <div class="card-icon">➗</div>
       <h3>The formula</h3>
-      <p>Effectiveness = (Suitability + Real Outcome + Sustainability) ÷ 3. Each pillar is scored 0–100. The result is a single, clear effectiveness percentage.</p>
+      <p>Effectiveness = (Suitability + Real Outcome + Sustainability) ÷ 3. Each pillar is scored 0–100. The average gives you a single, clear effectiveness percentage.</p>
     </div>
     <div class="about-note">
       <h3>A note on judgement</h3>
-      <p>AEM is not meant for absolute judgement. It is a tool to help you make realistic decisions based on your own situation and results — not anyone else's standards or expectations.</p>
+      <p>AEM does not aim for absolute classification — it aims for realistic assessment built on your own experience. It can be applied to healthy habits, study methods, productivity approaches, and even personal relationships. Flexibility is at its core, making it suitable for any age or lifestyle.</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <p><strong>AEM</strong> — Aryam's Effectiveness Metric &nbsp;·&nbsp; Built with intention</p>
+  <p><strong>AEM</strong> — Aryam's Effectiveness Metric &nbsp;·&nbsp; by Aryam &nbsp;·&nbsp; <a href="https://privekennedy.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">privekennedy</a></p>
 </footer>
 
 <div class="toast" id="toast">Saved ✓</div>
