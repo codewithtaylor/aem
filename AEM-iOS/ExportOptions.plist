@@ -5,12 +5,15 @@
     <key>method</key>
     <string>app-store-connect</string>
     <key>signingStyle</key>
-    <string>automatic</string>
-    <key>teamID</key>
-    <string>$(TEAM_ID)</string>
+    <string>manual</string>
     <key>uploadSymbols</key>
     <true/>
     <key>compileBitcode</key>
     <false/>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.aemevaluation.aem</key>
+        <string>AEM Distribution</string>
+    </dict>
 </dict>
 </plist>
