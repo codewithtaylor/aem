@@ -19,7 +19,6 @@ jobs:
       - name: Set up App Store Connect API key
         env:
           API_KEY_ID: ${{ secrets.API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.API_ISSUER_ID }}
           API_KEY_BASE64: ${{ secrets.API_KEY_BASE64 }}
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
@@ -29,6 +28,7 @@ jobs:
         env:
           API_KEY_ID: ${{ secrets.API_KEY_ID }}
           API_ISSUER_ID: ${{ secrets.API_ISSUER_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
         run: |
           xcodebuild archive \
             -project AEM-iOS/AEM.xcodeproj \
@@ -40,13 +40,15 @@ jobs:
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_$API_KEY_ID.p8 \
             -authenticationKeyID $API_KEY_ID \
             -authenticationKeyIssuerID $API_ISSUER_ID \
-            DEVELOPMENT_TEAM=${{ secrets.TEAM_ID }}
+            DEVELOPMENT_TEAM=$TEAM_ID
 
       - name: Export IPA
         env:
           API_KEY_ID: ${{ secrets.API_KEY_ID }}
           API_ISSUER_ID: ${{ secrets.API_ISSUER_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
         run: |
+          sed -i '' "s/\$(TEAM_ID)/$TEAM_ID/" AEM-iOS/ExportOptions.plist
           xcodebuild -exportArchive \
             -archivePath $RUNNER_TEMP/AEM.xcarchive \
             -exportPath $RUNNER_TEMP/export \
