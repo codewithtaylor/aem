@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>AEM — Aryam's Effectiveness Metric</title>
+<style>
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/inter-300.ttf') format('truetype'); }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/inter-400.ttf') format('truetype'); }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/inter-500.ttf') format('truetype'); }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/inter-600.ttf') format('truetype'); }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/inter-700.ttf') format('truetype'); }
+  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/cairo-300.ttf') format('truetype'); }
+  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/cairo-400.ttf') format('truetype'); }
+  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/cairo-500.ttf') format('truetype'); }
+  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/cairo-600.ttf') format('truetype'); }
+  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/cairo-700.ttf') format('truetype'); }
+</style>
+<script>
+  (function() {
+    const saved = localStorage.getItem('aem_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    const lang = localStorage.getItem('aem_lang') || 'en';
+    if (lang === 'ar') {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+    }
+  })();
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f6f4f0;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: rgba(0,0,0,0.08);
+    --text: #1a1917;
+    --muted: #6b6860;
+    --faint: #9b9890;
+
+    --failed: #c0392b;
+    --failed-bg: #fdf0ef;
+    --limited: #d35400;
+    --limited-bg: #fef4ec;
+    --moderate: #b8860b;
+    --moderate-bg: #fefaed;
+    --effective: #27ae60;
+    --effective-bg: #edfaf3;
+    --ideal: #2471a3;
+    --ideal-bg: #eef5fc;
+
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #111110;
+    --surface: #1c1b19;
+    --surface2: #252422;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0ede8;
+    --muted: #9b9890;
+    --faint: #6b6860;
+
+    --failed-bg: #2a1514;
+    --limited-bg: #2a1c0d;
+    --moderate-bg: #272310;
+    --effective-bg: #0f2419;
+    --ideal-bg: #0d1e2a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  html[lang="ar"] body {
+    font-family: 'Cairo', -apple-system, sans-serif;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(246, 244, 240, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+  }
+
+  [data-theme="dark"] nav {
+    background: rgba(17, 17, 16, 0.9);
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-logo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .theme-toggle svg { width: 15px; height: 15px; }
+
+  .lang-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0 7px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .lang-toggle:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 100px 2rem 80px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    background: var(--surface);
+  }
+
+  html[lang="ar"] .hero-eyebrow {
+    letter-spacing: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  html[lang="ar"] .hero h1 {
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 1.5rem;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .hero-desc em { font-style: italic; color: var(--text); font-weight: 500; }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--text);
+    color: var(--bg);
+    text-decoration: none;
+    padding: 13px 26px;
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  html[lang="ar"] .hero-cta { letter-spacing: 0; }
+
+  .hero-cta:hover { transform: translateY(-1px); opacity: 0.9; }
+  .hero-cta svg { width: 15px; height: 15px; }
+
+  html[dir="rtl"] .hero-cta svg { transform: scaleX(-1); }
+
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .hero-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--faint);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px 12px;
+  }
+
+  .hero-quote {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--faint);
+    letter-spacing: 0.01em;
+  }
+
+  /* ── FORMULA STRIP ── */
+  .formula-strip {
+    max-width: 860px;
+    margin: 0 auto 80px;
+    padding: 0 2rem;
+  }
+
+  .formula-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .formula-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 0.5rem;
+  }
+
+  html[lang="ar"] .formula-label { letter-spacing: 0; }
+
+  .formula-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  html[lang="ar"] .formula-text { letter-spacing: 0; }
+
+  .formula-pillars {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .pillar {
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--bg);
+  }
+
+  /* ── SECTION HEADINGS ── */
+  .section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 80px;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 1.25rem;
+  }
+
+  html[lang="ar"] .section-label { letter-spacing: 0; }
+
+  .section-title {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.03em;
+  }
+
+  html[lang="ar"] .section-title { letter-spacing: 0; }
+
+  .section-intro {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.95rem;
+    max-width: 540px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  /* ── CALCULATOR ── */
+  #calculator .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+
+  .field-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.875rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    resize: none;
+  }
+
+  html[lang="ar"] input[type="text"],
+  html[lang="ar"] textarea {
+    font-family: 'Cairo', -apple-system, sans-serif;
+    text-align: right;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: rgba(0,0,0,0.25);
+  }
+
+  [data-theme="dark"] input[type="text"]:focus,
+  [data-theme="dark"] textarea:focus {
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  textarea { min-height: 72px; }
+
+  .rating-block { margin-top: 1.25rem; }
+
+  .rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+
+  .rating-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .rating-help {
+    font-size: 0.8rem;
+    color: var(--faint);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .rating-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  html[dir="rtl"] .rating-value { text-align: left; }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  .number-input {
+    width: 54px;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.825rem;
+  }
+
+  /* Result card */
+  .result-card {
+    position: sticky;
+    top: 80px;
+  }
+
+  .score-display {
+    text-align: center;
+    padding: 1.5rem 0 1.25rem;
+  }
+
+  .score-number {
+    font-size: 4.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+    transition: color 0.4s;
+    letter-spacing: -0.04em;
+  }
+
+  html[lang="ar"] .score-number { letter-spacing: 0; }
+
+  .score-label-text {
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+    margin-top: 8px;
+  }
+
+  html[lang="ar"] .score-label-text { letter-spacing: 0; }
+
+  .category-pill {
+    display: inline-block;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 12px 0 0;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  .cat-failed .category-pill  { background: var(--failed-bg);   color: var(--failed); }
+  .cat-limited .category-pill { background: var(--limited-bg);  color: var(--limited); }
+  .cat-moderate .category-pill{ background: var(--moderate-bg); color: var(--moderate); }
+  .cat-effective .category-pill{background: var(--effective-bg);color: var(--effective); }
+  .cat-ideal .category-pill   { background: var(--ideal-bg);    color: var(--ideal); }
+
+  .cat-failed .score-number   { color: var(--failed); }
+  .cat-limited .score-number  { color: var(--limited); }
+  .cat-moderate .score-number { color: var(--moderate); }
+  .cat-effective .score-number{ color: var(--effective); }
+  .cat-ideal .score-number    { color: var(--ideal); }
+
+  .progress-bar-wrap {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1.25rem 0;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
+    background: var(--text);
+  }
+
+  html[dir="rtl"] .progress-bar-fill {
+    margin-left: auto;
+  }
+
+  .cat-failed .progress-bar-fill  { background: var(--failed); }
+  .cat-limited .progress-bar-fill { background: var(--limited); }
+  .cat-moderate .progress-bar-fill{ background: var(--moderate); }
+  .cat-effective .progress-bar-fill{background: var(--effective); }
+  .cat-ideal .progress-bar-fill   { background: var(--ideal); }
+
+  .helper-text {
+    font-size: 0.825rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+    min-height: 38px;
+    padding: 0 0.5rem;
+  }
+
+  .btn-save {
+    width: 100%;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: opacity 0.2s, transform 0.15s;
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .btn-save:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-save:not(:disabled):hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-reset {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-family: inherit;
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+
+  .btn-reset:hover { background: var(--surface2); }
+
+  .btn-share {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-family: inherit;
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+
+  .btn-share:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-share:not(:disabled):hover { background: var(--surface2); }
+  .btn-share svg { width: 14px; height: 14px; }
+
+  /* ── SCROLL TO TOP ── */
+  .scroll-top {
+    position: fixed;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.2s;
+    z-index: 150;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+
+  html[dir="rtl"] .scroll-top { right: auto; left: 20px; }
+
+  .scroll-top.visible { opacity: 1; pointer-events: all; }
+  .scroll-top:hover { transform: translateY(-2px); }
+  .scroll-top svg { width: 16px; height: 16px; }
+
+  .toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 200;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── SCALE ── */
+  .scale-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .scale-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 18px;
+  }
+
+  .scale-range {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .scale-desc {
+    font-size: 0.875rem;
+    color: var(--text);
+  }
+
+  .scale-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .badge-failed   { background: var(--failed-bg);   color: var(--failed); }
+  .badge-limited  { background: var(--limited-bg);  color: var(--limited); }
+  .badge-moderate { background: var(--moderate-bg); color: var(--moderate); }
+  .badge-effective{ background: var(--effective-bg);color: var(--effective); }
+  .badge-ideal    { background: var(--ideal-bg);    color: var(--ideal); }
+
+  /* ── HISTORY ── */
+  .history-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .btn-export:hover {
+    border-color: var(--muted);
+    background: var(--surface2);
+  }
+
+  #history-section .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    transition: border-color 0.2s;
+  }
+
+  .history-item:hover { border-color: rgba(0,0,0,0.15); }
+  [data-theme="dark"] .history-item:hover { border-color: rgba(255,255,255,0.12); }
+
+  .history-score { text-align: center; }
+
+  .history-score-num {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  html[lang="ar"] .history-score-num { letter-spacing: 0; }
+
+  .history-meta h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .history-meta p {
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+
+  .history-notes {
+    margin-top: 4px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .history-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--faint);
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+  }
+
+  .history-delete:hover { color: var(--failed); background: var(--failed-bg); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--faint);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .empty-state-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 0.875rem; line-height: 1.6; }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .about-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .about-card .card-icon {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  html[lang="ar"] .about-card h3 { letter-spacing: 0; }
+
+  .about-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .about-note {
+    margin-top: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid rgba(0,0,0,0.12);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1.25rem 1.5rem;
+    grid-column: 1 / -1;
+  }
+
+  html[dir="rtl"] .about-note {
+    border-left: 1px solid var(--border);
+    border-right: 3px solid rgba(0,0,0,0.12);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  }
+
+  [data-theme="dark"] .about-note {
+    border-left-color: rgba(255,255,255,0.12);
+  }
+
+  html[dir="rtl"][data-theme="dark"] .about-note {
+    border-left-color: var(--border);
+    border-right-color: rgba(255,255,255,0.12);
+  }
+
+  .about-note h3 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    margin-bottom: 0.5rem;
+  }
+
+  html[lang="ar"] .about-note h3 { letter-spacing: 0; }
+
+  .about-note p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  /* ── COMPARISON ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .compare-model {
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+
+  .compare-what {
+    font-size: 0.875rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.55;
+  }
+
+  .compare-but {
+    font-size: 0.825rem;
+    color: var(--faint);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .compare-aem {
+    grid-column: 1 / -1;
+    border-left: 3px solid rgba(0,0,0,0.15);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  html[dir="rtl"] .compare-aem {
+    border-left: 1px solid var(--border);
+    border-right: 3px solid rgba(0,0,0,0.15);
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+
+  [data-theme="dark"] .compare-aem {
+    border-left-color: rgba(255,255,255,0.15);
+  }
+
+  html[dir="rtl"][data-theme="dark"] .compare-aem {
+    border-left-color: var(--border);
+    border-right-color: rgba(255,255,255,0.15);
+  }
+
+  .compare-strength {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+
+  footer strong {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    #calculator .calc-grid { grid-template-columns: 1fr; }
+    .result-card { position: static; }
+    .about-grid { grid-template-columns: 1fr; }
+    .scale-row { grid-template-columns: 80px 1fr; }
+    .scale-badge { display: none; }
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1.25rem; }
+    .section { padding: 0 1rem 60px; }
+    .hero { padding: 60px 1rem 50px; }
+    .formula-strip { padding: 0 1rem; }
+    .nav-links { display: none; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .compare-aem { grid-column: 1; border-left: 3px solid rgba(0,0,0,0.15); border-radius: 0 var(--radius) var(--radius) 0; }
+    html[dir="rtl"] .compare-aem { border-left: 1px solid var(--border); border-right: 3px solid rgba(0,0,0,0.15); border-radius: var(--radius) 0 0 var(--radius); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a class="nav-logo" href="#">AEM</a>
+    <ul class="nav-links">
+      <li><a href="#calculator" data-i18n="nav.evaluate">Evaluate</a></li>
+      <li><a href="#scale" data-i18n="nav.scale">Scale</a></li>
+      <li><a href="#history-section" data-i18n="nav.history">History</a></li>
+      <li><a href="#about" data-i18n="nav.about">About</a></li>
+      <li><a href="#comparison" data-i18n="nav.compare">Compare</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">AR</button>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <span class="hero-eyebrow" data-i18n="hero.eyebrow">Aryam's Effectiveness Metric</span>
+  <h1 data-i18n-html="hero.h1">How effective is<br><em>your habit, really?</em></h1>
+  <p class="hero-desc" data-i18n-html="hero.desc">A personal evaluation tool that measures how well any habit, method, or behaviour actually works — for <em>you</em>. Based on your own experience, not popular opinion.</p>
+  <div class="hero-tags">
+    <span class="hero-tag" data-i18n="hero.tag.habits">Healthy habits</span>
+    <span class="hero-tag" data-i18n="hero.tag.study">Study methods</span>
+    <span class="hero-tag" data-i18n="hero.tag.productivity">Productivity</span>
+    <span class="hero-tag" data-i18n="hero.tag.relationships">Personal relationships</span>
+  </div>
+  <a href="#calculator" class="hero-cta">
+    <span data-i18n="hero.cta">Start evaluating</span>
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+  </a>
+  <p class="hero-quote" data-i18n="hero.quote">"Success is not by luck — success is by fit."</p>
+</section>
+
+<div class="formula-strip">
+  <div class="formula-card">
+    <div>
+      <div class="formula-label" data-i18n="formula.label">Formula</div>
+      <div class="formula-text" data-i18n="formula.text">Effectiveness = (S + O + Su) ÷ 3</div>
+    </div>
+    <div class="formula-pillars">
+      <span class="pillar" data-i18n="pillar.suitability">Suitability</span>
+      <span class="pillar" data-i18n="pillar.outcome">Real Outcome</span>
+      <span class="pillar" data-i18n="pillar.sustainability">Sustainability</span>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<section class="section" id="calculator">
+  <div class="section-label" data-i18n="calc.section-label">Evaluate</div>
+  <h2 class="section-title" data-i18n="calc.section-title">Score a habit or behaviour</h2>
+  <p class="section-intro" data-i18n="calc.section-intro">Rate each pillar 0–100 and get an instant AEM score. Save it to your history when you're done.</p>
+
+  <div class="calc-grid">
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-title" data-i18n="calc.card1-title">What are you evaluating?</div>
+        <label class="field-label" for="title-input" data-i18n="calc.title-label">Habit / behaviour name</label>
+        <input type="text" id="title-input" data-i18n-placeholder="calc.title-placeholder" placeholder="e.g. Morning cold shower">
+        <label class="field-label" for="notes-input" style="margin-top:12px;" data-i18n="calc.notes-label">Notes (optional)</label>
+        <textarea id="notes-input" data-i18n-placeholder="calc.notes-placeholder" placeholder="Any context or observations..."></textarea>
+      </div>
+
+      <div class="card">
+        <div class="card-title" data-i18n="calc.card2-title">Ratings</div>
+
+        <div class="rating-block">
+          <div class="rating-header">
+            <span class="rating-name" data-i18n="rating.suit.name">Suitability</span>
+            <span class="rating-value" id="suit-val">50</span>
+          </div>
+          <div class="rating-help" data-i18n="rating.suit.help">How well it fits your personality, body, lifestyle, and needs.</div>
+          <div class="slider-row">
+            <input type="range" id="suit-slider" min="0" max="100" step="1" value="50">
+            <input type="text" inputmode="numeric" class="number-input" id="suit-num" value="50">
+          </div>
+        </div>
+
+        <div class="rating-block" style="margin-top:1.5rem;">
+          <div class="rating-header">
+            <span class="rating-name" data-i18n="rating.out.name">Real Outcome</span>
+            <span class="rating-value" id="out-val">50</span>
+          </div>
+          <div class="rating-help" data-i18n="rating.out.help">The actual improvement you noticed after applying it.</div>
+          <div class="slider-row">
+            <input type="range" id="out-slider" min="0" max="100" step="1" value="50">
+            <input type="text" inputmode="numeric" class="number-input" id="out-num" value="50">
+          </div>
+        </div>
+
+        <div class="rating-block" style="margin-top:1.5rem;">
+          <div class="rating-header">
+            <span class="rating-name" data-i18n="rating.sus.name">Sustainability</span>
+            <span class="rating-value" id="sus-val">50</span>
+          </div>
+          <div class="rating-help" data-i18n="rating.sus.help">How easy it is to repeat without pressure or burnout.</div>
+          <div class="slider-row">
+            <input type="range" id="sus-slider" min="0" max="100" step="1" value="50">
+            <input type="text" inputmode="numeric" class="number-input" id="sus-num" value="50">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card" id="result-card">
+      <div class="score-display">
+        <div class="score-number" id="score-num">50%</div>
+        <div class="score-label-text" data-i18n="score.label">Effectiveness score</div>
+        <div class="category-pill" id="cat-pill">Moderate</div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:50%"></div>
+      </div>
+
+      <div class="helper-text" id="helper-text">Decent, but needs additional support.</div>
+
+      <button class="btn-save" id="btn-save" disabled data-i18n="btn.save">Save to history</button>
+      <button class="btn-reset" id="btn-reset" data-i18n="btn.reset">Reset</button>
+      <button class="btn-share" id="btn-share" disabled>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 0 0 0 8h1"/></svg>
+        <span data-i18n="btn.share">Share score</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SCALE -->
+<section class="section" id="scale">
+  <div class="section-label" data-i18n="scale.section-label">Interpretation</div>
+  <h2 class="section-title" data-i18n="scale.section-title">What does your score mean?</h2>
+  <p class="section-intro" data-i18n="scale.section-intro">AEM scores fall into five categories, each carrying a distinct signal about a behaviour's fit in your life.</p>
+
+  <div class="scale-grid">
+    <div class="scale-row">
+      <span class="scale-range">0 – 30%</span>
+      <span class="scale-desc" data-i18n="scale.0-30">Failed / unsuitable — this method doesn't suit your situation</span>
+      <span class="scale-badge badge-failed" data-i18n="cat.failed.label">Failed</span>
+    </div>
+    <div class="scale-row">
+      <span class="scale-range">31 – 50%</span>
+      <span class="scale-desc" data-i18n="scale.31-50">Limited impact — not recommended as a primary approach</span>
+      <span class="scale-badge badge-limited" data-i18n="cat.limited.label">Limited</span>
+    </div>
+    <div class="scale-row">
+      <span class="scale-range">51 – 70%</span>
+      <span class="scale-desc" data-i18n="scale.51-70">Moderately useful — decent, but needs additional support</span>
+      <span class="scale-badge badge-moderate" data-i18n="cat.moderate.label">Moderate</span>
+    </div>
+    <div class="scale-row">
+      <span class="scale-range">71 – 90%</span>
+      <span class="scale-desc" data-i18n="scale.71-90">Effective — a strong choice to commit to</span>
+      <span class="scale-badge badge-effective" data-i18n="cat.effective.label">Effective</span>
+    </div>
+    <div class="scale-row">
+      <span class="scale-range">91 – 100%</span>
+      <span class="scale-desc" data-i18n="scale.91-100">Ideal — excellent, maintain long-term consistency</span>
+      <span class="scale-badge badge-ideal" data-i18n="cat.ideal.label">Ideal</span>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="section" id="history-section">
+  <div class="section-label" data-i18n="history.section-label">History</div>
+  <h2 class="section-title" data-i18n="history.section-title">Your evaluations</h2>
+  <p class="section-intro" data-i18n="history.section-intro">Your saved evaluations, stored locally on your device.</p>
+  <div class="history-actions" id="history-actions" style="display:none">
+    <button class="btn-export" id="btn-export" data-i18n="history.export">Export CSV</button>
+  </div>
+  <div id="history-list" class="history-list"></div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="section-label" data-i18n="about.section-label">About</div>
+  <h2 class="section-title" data-i18n="about.section-title">Aryam's Effectiveness Metric</h2>
+  <p class="section-intro" data-i18n="about.section-intro">AEM is a personal evaluation model to measure the effectiveness of any behaviour, habit, or method in daily life.</p>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="card-icon">📐</div>
+      <h3 data-i18n="about.suit.title">Suitability</h3>
+      <p data-i18n="about.suit.p">How well the method aligns with your personality, physical condition, lifestyle, and specific needs. What works for most people may not work for you — and that's the point.</p>
+    </div>
+    <div class="about-card">
+      <div class="card-icon">📈</div>
+      <h3 data-i18n="about.out.title">Real Outcome</h3>
+      <p data-i18n="about.out.p">The actual change or improvement you noticed after applying the behaviour. Not what you hoped for — what genuinely happened. Honest self-assessment is what makes AEM useful.</p>
+    </div>
+    <div class="about-card">
+      <div class="card-icon">🔁</div>
+      <h3 data-i18n="about.sus.title">Sustainability</h3>
+      <p data-i18n="about.sus.p">How consistently you can repeat this behaviour without pressure or exhaustion. Long-term commitment matters far more than short-lived bursts of effort.</p>
+    </div>
+    <div class="about-card">
+      <div class="card-icon">➗</div>
+      <h3 data-i18n="about.formula.title">The formula</h3>
+      <p data-i18n="about.formula.p">Effectiveness = (Suitability + Real Outcome + Sustainability) ÷ 3. Each pillar is scored 0–100. The average gives you a single, clear effectiveness percentage.</p>
+    </div>
+    <div class="about-note">
+      <h3 data-i18n="about.diff.title">What makes AEM different</h3>
+      <p data-i18n-html="about.diff.p">It does not demand perfection — instead, it opens the door to three questions: <em>"Does this suit me?"</em> <em>"Can I sustain it?"</em> <em>"Did this create a real difference?"</em> It does not provide ready-made judgments, but invites a calm internal dialogue. It does not depend on the results of others, but on your understanding of yourself and your personal experience.</p>
+    </div>
+    <div class="about-note">
+      <h3 data-i18n="about.value.title">The value</h3>
+      <p data-i18n-html="about.value.p">The question shifts from <em>"Did I achieve?"</em> to <em>"Did this truly fit me?"</em> It connects satisfaction, consistency, and real impact without putting you in a race with others. Suitable for anyone seeking to live honestly with themselves and grow in their own way. It may not be a standard for everyone — but from the beginning, it was meant to be a voice for those who could not find themselves within the standards of others.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section" id="comparison">
+  <div class="section-label" data-i18n="compare.section-label">Context</div>
+  <h2 class="section-title" data-i18n="compare.section-title">AEM vs global models</h2>
+  <p class="section-intro" data-i18n="compare.section-intro">Despite the many global models used to measure success and behaviour, many of them lack the human and personal dimension. Below is a comparison showing how AEM differs — not only in form, but in the very essence of effectiveness itself.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-model" data-i18n="compare.smart.model">SMART Goals</div>
+      <p class="compare-what" data-i18n="compare.smart.what">A method for setting goals with clarity and logic. It focuses on implementation after planning.</p>
+      <p class="compare-but" data-i18n="compare.smart.but">Suitable for planning — does not deeply account for the human dimension.</p>
+    </div>
+    <div class="compare-card">
+      <div class="compare-model" data-i18n="compare.kpi.model">KPI — Key Performance Indicators</div>
+      <p class="compare-what" data-i18n="compare.kpi.what">Numerical indicators used to measure progress.</p>
+      <p class="compare-but" data-i18n="compare.kpi.but">Provides a clear reading for institutions and systems — does not fully understand the human being.</p>
+    </div>
+    <div class="compare-card">
+      <div class="compare-model" data-i18n="compare.reaim.model">RE-AIM</div>
+      <p class="compare-what" data-i18n="compare.reaim.what">A comprehensive framework for evaluating major projects.</p>
+      <p class="compare-but" data-i18n="compare.reaim.but">Strong and systematic — not integrated with everyday life experiences.</p>
+    </div>
+    <div class="compare-card compare-aem">
+      <div class="compare-model" data-i18n="compare.aem.model">AEM — Aryam's Effectiveness Metric</div>
+      <p class="compare-what" data-i18n="compare.aem.what">A behavioral evaluation model that measures the effectiveness of daily behaviour through its impact and sustainability. Focuses on the relationship between action and outcome within a personal context — far from numerical indicators or institutional standards.</p>
+      <p class="compare-strength" data-i18n="compare.aem.strength">It is not merely a development of previous systems, but a transformation in the way understanding itself is approached: from numbers to impact, and from institutional standards to individual experience. AEM does not claim superiority over global models — it offers a compassionate invitation to rethink how success is measured, and how genuine effectiveness can exist even when it cannot be turned into measurable indicators.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p id="footer-text" data-i18n-html="footer"><strong>AEM</strong> — Aryam's Effectiveness Metric &nbsp;·&nbsp; by Aryam</p>
+</footer>
+
+<button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 13V3M3 8l5-5 5 5"/></svg>
+</button>
+
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+  // ── Translations ──
+  const translations = {
+    en: {
+      'nav.evaluate': 'Evaluate',
+      'nav.scale': 'Scale',
+      'nav.history': 'History',
+      'nav.about': 'About',
+      'nav.compare': 'Compare',
+      'hero.eyebrow': "Aryam's Effectiveness Metric",
+      'hero.h1': 'How effective is<br><em>your habit, really?</em>',
+      'hero.desc': 'A personal evaluation tool that measures how well any habit, method, or behaviour actually works — for <em>you</em>. Based on your own experience, not popular opinion.',
+      'hero.tag.habits': 'Healthy habits',
+      'hero.tag.study': 'Study methods',
+      'hero.tag.productivity': 'Productivity',
+      'hero.tag.relationships': 'Personal relationships',
+      'hero.cta': 'Start evaluating',
+      'hero.quote': '"Success is not by luck — success is by fit."',
+      'formula.label': 'Formula',
+      'formula.text': 'Effectiveness = (S + O + Su) ÷ 3',
+      'pillar.suitability': 'Suitability',
+      'pillar.outcome': 'Real Outcome',
+      'pillar.sustainability': 'Sustainability',
+      'calc.section-label': 'Evaluate',
+      'calc.section-title': 'Score a habit or behaviour',
+      'calc.section-intro': 'Rate each pillar 0–100 and get an instant AEM score. Save it to your history when you\'re done.',
+      'calc.card1-title': 'What are you evaluating?',
+      'calc.title-label': 'Habit / behaviour name',
+      'calc.title-placeholder': 'e.g. Morning cold shower',
+      'calc.notes-label': 'Notes (optional)',
+      'calc.notes-placeholder': 'Any context or observations...',
+      'calc.card2-title': 'Ratings',
+      'rating.suit.name': 'Suitability',
+      'rating.suit.help': 'How well it fits your personality, body, lifestyle, and needs.',
+      'rating.out.name': 'Real Outcome',
+      'rating.out.help': 'The actual improvement you noticed after applying it.',
+      'rating.sus.name': 'Sustainability',
+      'rating.sus.help': 'How easy it is to repeat without pressure or burnout.',
+      'score.label': 'Effectiveness score',
+      'btn.save': 'Save to history',
+      'btn.reset': 'Reset',
+      'btn.share': 'Share score',
+      'scale.section-label': 'Interpretation',
+      'scale.section-title': 'What does your score mean?',
+      'scale.section-intro': 'AEM scores fall into five categories, each carrying a distinct signal about a behaviour\'s fit in your life.',
+      'scale.0-30': "Failed / unsuitable — this method doesn't suit your situation",
+      'scale.31-50': 'Limited impact — not recommended as a primary approach',
+      'scale.51-70': 'Moderately useful — decent, but needs additional support',
+      'scale.71-90': 'Effective — a strong choice to commit to',
+      'scale.91-100': 'Ideal — excellent, maintain long-term consistency',
+      'history.section-label': 'History',
+      'history.section-title': 'Your evaluations',
+      'history.section-intro': 'Your saved evaluations, stored locally on your device.',
+      'history.empty': 'No evaluations yet.<br>Save one from the Evaluate section above.',
+      'history.export': 'Export CSV',
+      'about.section-label': 'About',
+      'about.section-title': "Aryam's Effectiveness Metric",
+      'about.section-intro': 'AEM is a personal evaluation model to measure the effectiveness of any behaviour, habit, or method in daily life.',
+      'about.suit.title': 'Suitability',
+      'about.suit.p': "How well the method aligns with your personality, physical condition, lifestyle, and specific needs. What works for most people may not work for you — and that's the point.",
+      'about.out.title': 'Real Outcome',
+      'about.out.p': 'The actual change or improvement you noticed after applying the behaviour. Not what you hoped for — what genuinely happened. Honest self-assessment is what makes AEM useful.',
+      'about.sus.title': 'Sustainability',
+      'about.sus.p': 'How consistently you can repeat this behaviour without pressure or exhaustion. Long-term commitment matters far more than short-lived bursts of effort.',
+      'about.formula.title': 'The formula',
+      'about.formula.p': 'Effectiveness = (Suitability + Real Outcome + Sustainability) ÷ 3. Each pillar is scored 0–100. The average gives you a single, clear effectiveness percentage.',
+      'about.diff.title': 'What makes AEM different',
+      'about.diff.p': 'It does not demand perfection — instead, it opens the door to three questions: <em>"Does this suit me?"</em> <em>"Can I sustain it?"</em> <em>"Did this create a real difference?"</em> It does not provide ready-made judgments, but invites a calm internal dialogue. It does not depend on the results of others, but on your understanding of yourself and your personal experience.',
+      'about.value.title': 'The value',
+      'about.value.p': 'The question shifts from <em>"Did I achieve?"</em> to <em>"Did this truly fit me?"</em> It connects satisfaction, consistency, and real impact without putting you in a race with others. Suitable for anyone seeking to live honestly with themselves and grow in their own way. It may not be a standard for everyone — but from the beginning, it was meant to be a voice for those who could not find themselves within the standards of others.',
+      'compare.section-label': 'Context',
+      'compare.section-title': 'AEM vs global models',
+      'compare.section-intro': 'Despite the many global models used to measure success and behaviour, many of them lack the human and personal dimension. Below is a comparison showing how AEM differs — not only in form, but in the very essence of effectiveness itself.',
+      'compare.smart.model': 'SMART Goals',
+      'compare.smart.what': 'A method for setting goals with clarity and logic. It focuses on implementation after planning.',
+      'compare.smart.but': 'Suitable for planning — does not deeply account for the human dimension.',
+      'compare.kpi.model': 'KPI — Key Performance Indicators',
+      'compare.kpi.what': 'Numerical indicators used to measure progress.',
+      'compare.kpi.but': 'Provides a clear reading for institutions and systems — does not fully understand the human being.',
+      'compare.reaim.model': 'RE-AIM',
+      'compare.reaim.what': 'A comprehensive framework for evaluating major projects.',
+      'compare.reaim.but': 'Strong and systematic — not integrated with everyday life experiences.',
+      'compare.aem.model': "AEM — Aryam's Effectiveness Metric",
+      'compare.aem.what': 'A behavioral evaluation model that measures the effectiveness of daily behaviour through its impact and sustainability. Focuses on the relationship between action and outcome within a personal context — far from numerical indicators or institutional standards.',
+      'compare.aem.strength': 'It is not merely a development of previous systems, but a transformation in the way understanding itself is approached: from numbers to impact, and from institutional standards to individual experience. AEM does not claim superiority over global models — it offers a compassionate invitation to rethink how success is measured, and how genuine effectiveness can exist even when it cannot be turned into measurable indicators.',
+      'footer': '<strong>AEM</strong> — Aryam\'s Effectiveness Metric &nbsp;·&nbsp; by Aryam',
+      'toast': 'Saved ✓',
+      'cat.failed.label': 'Failed',
+      'cat.failed.full': 'Failed / Unsuitable',
+      'cat.failed.help': "This method doesn't suit your situation.",
+      'cat.limited.label': 'Limited',
+      'cat.limited.full': 'Limited (not recommended as primary)',
+      'cat.limited.help': 'Limited impact — not a primary option.',
+      'cat.moderate.label': 'Moderate',
+      'cat.moderate.full': 'Moderately useful (needs support)',
+      'cat.moderate.help': 'Decent, but needs additional support.',
+      'cat.effective.label': 'Effective',
+      'cat.effective.full': 'Effective (good commitment option)',
+      'cat.effective.help': 'A strong choice to commit to.',
+      'cat.ideal.label': 'Ideal',
+      'cat.ideal.full': 'Ideal (maintain long-term)',
+      'cat.ideal.help': 'Excellent — maintain long-term consistency.',
+      'lang-toggle': 'AR',
+      'share.footer': "Aryam's Effectiveness Metric (AEM)",
+      'date-locale': 'en-GB',
+    },
+
+    ar: {
+      'nav.evaluate': 'تقييم',
+      'nav.scale': 'المقياس',
+      'nav.history': 'السجل',
+      'nav.about': 'عن المقياس',
+      'nav.compare': 'مقارنة',
+      'hero.eyebrow': 'مقياس أريام للفاعلية',
+      'hero.h1': 'ما مدى فاعلية<br><em>عادتك، حقاً؟</em>',
+      'hero.desc': 'أداة تقييم شخصية تقيس مدى نجاح أي عادة أو أسلوب أو سلوك فعلياً — من أجل <em>أنت</em>. تستند إلى تجربتك الخاصة، لا إلى الآراء الشائعة.',
+      'hero.tag.habits': 'العادات الصحية',
+      'hero.tag.study': 'أساليب الدراسة',
+      'hero.tag.productivity': 'الإنتاجية',
+      'hero.tag.relationships': 'العلاقات الشخصية',
+      'hero.cta': 'ابدأ التقييم',
+      'hero.quote': '"النجاح ليس بالحظ — النجاح بالملاءمة."',
+      'formula.label': 'المعادلة',
+      'formula.text': 'الفاعلية = (الملاءمة + النتيجة + الاستدامة) ÷ 3',
+      'pillar.suitability': 'الملاءمة',
+      'pillar.outcome': 'النتيجة الحقيقية',
+      'pillar.sustainability': 'الاستدامة',
+      'calc.section-label': 'تقييم',
+      'calc.section-title': 'قيّم عادةً أو سلوكاً',
+      'calc.section-intro': 'قيّم كل ركيزة من 0 إلى 100 واحصل على نتيجة AEM فورية. احفظها في سجلك عند الانتهاء.',
+      'calc.card1-title': 'ماذا تقيّم؟',
+      'calc.title-label': 'اسم العادة / السلوك',
+      'calc.title-placeholder': 'مثال: الدش البارد الصباحي',
+      'calc.notes-label': 'ملاحظات (اختياري)',
+      'calc.notes-placeholder': 'أي سياق أو ملاحظات...',
+      'calc.card2-title': 'التقييمات',
+      'rating.suit.name': 'الملاءمة',
+      'rating.suit.help': 'مدى توافقها مع شخصيتك وجسدك وأسلوب حياتك واحتياجاتك.',
+      'rating.out.name': 'النتيجة الحقيقية',
+      'rating.out.help': 'التحسن الفعلي الذي لاحظته بعد تطبيقها.',
+      'rating.sus.name': 'الاستدامة',
+      'rating.sus.help': 'مدى سهولة تكرارها دون ضغط أو إرهاق.',
+      'score.label': 'نتيجة الفاعلية',
+      'btn.save': 'حفظ في السجل',
+      'btn.reset': 'إعادة تعيين',
+      'btn.share': 'مشاركة النتيجة',
+      'scale.section-label': 'التفسير',
+      'scale.section-title': 'ماذا تعني نتيجتك؟',
+      'scale.section-intro': 'تقع نتائج AEM ضمن خمس فئات، كل منها تحمل إشارة واضحة حول مدى توافق السلوك في حياتك.',
+      'scale.0-30': 'فاشل / غير مناسب — هذا الأسلوب لا يناسب وضعك',
+      'scale.31-50': 'تأثير محدود — لا يُنصح به كنهج رئيسي',
+      'scale.51-70': 'مفيد نسبياً — جيد، لكنه يحتاج دعماً إضافياً',
+      'scale.71-90': 'فعّال — خيار قوي للالتزام به',
+      'scale.91-100': 'مثالي — ممتاز، حافظ على الاستمرارية طويلة الأمد',
+      'history.section-label': 'السجل',
+      'history.section-title': 'تقييماتك',
+      'history.section-intro': 'تقييماتك المحفوظة، مخزّنة محلياً على جهازك.',
+      'history.empty': 'لا تقييمات بعد.<br>احفظ أحدها من قسم التقييم أعلاه.',
+      'history.export': 'تصدير CSV',
+      'about.section-label': 'عن المقياس',
+      'about.section-title': 'مقياس أريام للفاعلية',
+      'about.section-intro': 'AEM نموذج تقييم شخصي لقياس فاعلية أي سلوك أو عادة أو أسلوب في الحياة اليومية.',
+      'about.suit.title': 'الملاءمة',
+      'about.suit.p': 'مدى توافق الأسلوب مع شخصيتك وحالتك الجسدية وأسلوب حياتك واحتياجاتك الخاصة. ما يصلح لمعظم الناس قد لا يصلح لك — وهذه هي النقطة الجوهرية.',
+      'about.out.title': 'النتيجة الحقيقية',
+      'about.out.p': 'التغيير أو التحسن الفعلي الذي لاحظته بعد تطبيق السلوك. ليس ما كنت تأمله — بل ما حدث فعلاً. التقييم الذاتي الصادق هو ما يجعل AEM مفيداً.',
+      'about.sus.title': 'الاستدامة',
+      'about.sus.p': 'مدى انتظام قدرتك على تكرار هذا السلوك دون ضغط أو إرهاق. الالتزام طويل الأمد أهم بكثير من جهود قصيرة متقطعة.',
+      'about.formula.title': 'المعادلة',
+      'about.formula.p': 'الفاعلية = (الملاءمة + النتيجة الحقيقية + الاستدامة) ÷ 3. كل ركيزة تُقيَّم من 0 إلى 100. المتوسط يمنحك نسبة فاعلية واحدة وواضحة.',
+      'about.diff.title': 'ما يميّز AEM',
+      'about.diff.p': 'لا يطالبك بالكمال، بل يفتح لك باب التساؤل: <em>"هل هذا يناسبني؟ هل صنع فرقًا؟ هل أستطيع الاستمرار عليه؟"</em> لا يمنح أحكامًا جاهزة، بل يدعوك لمحادثة داخلية هادئة. لا يعتمد على نتائج الآخرين، بل على فهمك لذاتك وتجربتك.',
+      'about.value.title': 'القيمة',
+      'about.value.p': 'يساعدك تفهم جدوى ما تفعله يوميًا، مو بس <em>"هل أنجزت؟"</em> بل <em>"هل ناسبك؟"</em> يربط بين الشعور بالرضا والتكرار المستقر والأثر الواقعي، بدون أن يضعك في سباق غيرك. مناسب لأي شخص يبغى يعيش بصدق مع نفسه، ويتطور بطريقته.',
+      'compare.section-label': 'السياق',
+      'compare.section-title': 'AEM مقابل النماذج العالمية',
+      'compare.section-intro': 'رغم تعدّد النماذج العالمية في قياس النجاح والسلوك، إلا أن كثيرًا منها يفتقر إلى البُعد الإنساني والتجربة الشخصية. في هذا السياق، وُلد معيار أريام كاستجابة منهجية لفجوة لم تسدّها النماذج المعروفة. إنه ليس تطويرًا لما سبق، بل تحوّل في طريقة الفهم: من الأرقام إلى الأثر، ومن المعايير المؤسسية إلى التجربة الفردية. فيما يلي، مقارنة توضح كيف يختلف معيار أريام عن أشهر النماذج المستخدمة عالميًا، ليس في الشكل فقط، بل في جوهر الفعالية نفسها.',
+      'compare.smart.model': 'SMART Goals',
+      'compare.smart.what': 'طريقة لصياغة الأهداف بوضوح ومنطق.',
+      'compare.smart.but': 'مناسبة للتخطيط، لكنها لا تُعنى بالتجربة بعد التنفيذ.',
+      'compare.kpi.model': 'مؤشرات الأداء – KPI',
+      'compare.kpi.what': 'مؤشرات رقمية لقياس التقدّم.',
+      'compare.kpi.but': 'فعالة للأنظمة، لكنها لا تُجيد قراءة الإنسان.',
+      'compare.reaim.model': 'RE-AIM',
+      'compare.reaim.what': 'نموذج شامل لتقييم المشاريع الكبرى.',
+      'compare.reaim.but': 'قوي وممنهج، لكنه لا يتناغم مع الحياة اليومية.',
+      'compare.aem.model': 'معيار أريام – AEM',
+      'compare.aem.what': 'نموذج تقييم سلوكي ذاتي يقيس فعالية السلوك اليومي من خلال أثره واستمراريته. يركّز على العلاقة بين الفعل والنتيجة في السياق الشخصي، بعيدًا عن المؤشرات الرقمية أو المعايير المؤسسية.',
+      'compare.aem.strength': 'لا يدّعي معيار أريام التفوق على النماذج العالمية، بل يُقدّم زاوية نظر مختلفة، تركّز على الإنسان قبل الإنجاز، وعلى الأثر قبل الرقم. هو دعوة لإعادة التفكير في كيف نقيس النجاح، وكيف نحتفي بالفعل حين يكون صادقًا، حتى لو لم يُترجم إلى مؤشرات قابلة للقياس. قد لا يكون معيارًا للجميع، لكنه كان – من البداية – صوتًا لكل من لم يجد نفسه في معايير الآخرين.',
+      'footer': '<strong>AEM</strong> — مقياس أريام للفاعلية &nbsp;·&nbsp; بقلم أريام',
+      'toast': 'تم الحفظ ✓',
+      'cat.failed.label': 'فاشل',
+      'cat.failed.full': 'فاشل / غير مناسب',
+      'cat.failed.help': 'هذا الأسلوب لا يناسب وضعك.',
+      'cat.limited.label': 'محدود',
+      'cat.limited.full': 'محدود (لا يُنصح به كنهج رئيسي)',
+      'cat.limited.help': 'تأثير محدود — ليس خياراً رئيسياً.',
+      'cat.moderate.label': 'متوسط',
+      'cat.moderate.full': 'مفيد نسبياً (يحتاج دعماً)',
+      'cat.moderate.help': 'جيد، لكنه يحتاج دعماً إضافياً.',
+      'cat.effective.label': 'فعّال',
+      'cat.effective.full': 'فعّال (خيار التزام جيد)',
+      'cat.effective.help': 'خيار قوي للالتزام به.',
+      'cat.ideal.label': 'مثالي',
+      'cat.ideal.full': 'مثالي (حافظ على الأمد الطويل)',
+      'cat.ideal.help': 'ممتاز — حافظ على الاستمرارية طويلة الأمد.',
+      'lang-toggle': 'EN',
+      'share.footer': 'مقياس أريام للفاعلية (AEM)',
+      'date-locale': 'ar-SA',
+    }
+  };
+
+  const STORAGE_KEY = 'aem_history_v1';
+  let currentLang = localStorage.getItem('aem_lang') || 'en';
+
+  function haptic(type) {
+    window.webkit?.messageHandlers?.haptic?.postMessage({ type });
+  }
+
+  function t(key, ...args) {
+    const val = translations[currentLang][key] ?? translations.en[key] ?? key;
+    return typeof val === 'function' ? val(...args) : val;
+  }
+
+  function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      el.innerHTML = t(el.dataset.i18nHtml);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.getElementById('lang-toggle').textContent = t('lang-toggle');
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  }
+
+  function getCatData() {
+    return {
+      failed:    { label: t('cat.failed.label'),    full: t('cat.failed.full'),    help: t('cat.failed.help'),    cls: 'cat-failed' },
+      limited:   { label: t('cat.limited.label'),   full: t('cat.limited.full'),   help: t('cat.limited.help'),   cls: 'cat-limited' },
+      moderate:  { label: t('cat.moderate.label'),  full: t('cat.moderate.full'),  help: t('cat.moderate.help'),  cls: 'cat-moderate' },
+      effective: { label: t('cat.effective.label'), full: t('cat.effective.full'), help: t('cat.effective.help'), cls: 'cat-effective' },
+      ideal:     { label: t('cat.ideal.label'),     full: t('cat.ideal.full'),     help: t('cat.ideal.help'),     cls: 'cat-ideal' },
+    };
+  }
+
+  function getCategory(score) {
+    if (score <= 30) return 'failed';
+    if (score <= 50) return 'limited';
+    if (score <= 70) return 'moderate';
+    if (score <= 90) return 'effective';
+    return 'ideal';
+  }
+
+  function escapeHTML(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // ── Theme toggle ──
+  const moonSVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg>`;
+  const sunSVG  = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/></svg>`;
+
+  const toggleBtn = document.getElementById('theme-toggle');
+
+  function applyThemeIcon() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    toggleBtn.innerHTML = dark ? sunSVG : moonSVG;
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    haptic('light');
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('aem_theme', next);
+    applyThemeIcon();
+  });
+
+  applyThemeIcon();
+
+  // ── Language toggle ──
+  document.getElementById('lang-toggle').addEventListener('click', () => {
+    haptic('light');
+    currentLang = currentLang === 'en' ? 'ar' : 'en';
+    localStorage.setItem('aem_lang', currentLang);
+    applyTranslations();
+    update();
+    renderHistory();
+  });
+
+  // ── Slider sync ──
+  function syncPair(slider, numInput, valSpan) {
+    slider.addEventListener('input', () => {
+      const v = parseInt(slider.value);
+      numInput.value = v;
+      valSpan.textContent = v;
+      update();
+    });
+    numInput.addEventListener('input', () => {
+      let v = parseInt(numInput.value);
+      if (isNaN(v)) v = 0;
+      v = Math.min(100, Math.max(0, v));
+      slider.value = v;
+      valSpan.textContent = v;
+      update();
+    });
+    numInput.addEventListener('blur', () => {
+      let v = parseInt(numInput.value);
+      if (isNaN(v)) v = 0;
+      v = Math.min(100, Math.max(0, v));
+      numInput.value = v;
+      slider.value = v;
+      valSpan.textContent = v;
+      update();
+    });
+  }
+
+  syncPair(document.getElementById('suit-slider'), document.getElementById('suit-num'), document.getElementById('suit-val'));
+  syncPair(document.getElementById('out-slider'),  document.getElementById('out-num'),  document.getElementById('out-val'));
+  syncPair(document.getElementById('sus-slider'),  document.getElementById('sus-num'),  document.getElementById('sus-val'));
+
+  const titleInput = document.getElementById('title-input');
+  titleInput.addEventListener('input', update);
+
+  function getScore() {
+    const s  = parseInt(document.getElementById('suit-slider').value);
+    const o  = parseInt(document.getElementById('out-slider').value);
+    const su = parseInt(document.getElementById('sus-slider').value);
+    return Math.round((s + o + su) / 3);
+  }
+
+  let _lastCat = null;
+
+  function update() {
+    const score = getScore();
+    const cat = getCategory(score);
+    if (_lastCat !== null && cat !== _lastCat) haptic('rigid');
+    _lastCat = cat;
+    const d = getCatData()[cat];
+    const resultCard = document.getElementById('result-card');
+    ['cat-failed','cat-limited','cat-moderate','cat-effective','cat-ideal'].forEach(c => resultCard.classList.remove(c));
+    resultCard.classList.add(d.cls);
+
+    document.getElementById('score-num').textContent = score + '%';
+    document.getElementById('cat-pill').textContent = d.label;
+    document.getElementById('helper-text').textContent = d.help;
+    document.getElementById('progress-fill').style.width = score + '%';
+    const hasTitle = titleInput.value.trim().length > 0;
+    document.getElementById('btn-save').disabled = !hasTitle;
+    document.getElementById('btn-share').disabled = !hasTitle;
+  }
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    haptic('medium');
+    titleInput.value = '';
+    document.getElementById('notes-input').value = '';
+    ['suit','out','sus'].forEach(k => {
+      document.getElementById(k+'-slider').value = 50;
+      document.getElementById(k+'-num').value = 50;
+      document.getElementById(k+'-val').textContent = 50;
+    });
+    update();
+  });
+
+  // ── Share ──
+  document.getElementById('btn-share').addEventListener('click', () => {
+    const title = titleInput.value.trim();
+    if (!title) return;
+    haptic('light');
+    const score = getScore();
+    const cat = getCategory(score);
+    const d = getCatData()[cat];
+    const text = `${title}: ${score}% — ${d.full}\n\n${t('share.footer')}`;
+
+    if (window.webkit?.messageHandlers?.share) {
+      window.webkit.messageHandlers.share.postMessage({ text });
+    } else if (navigator.share) {
+      navigator.share({ text }).catch(() => {});
+    }
+  });
+
+  // ── History ──
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveHistory(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  function renderHistory() {
+    const items = loadHistory();
+    const container = document.getElementById('history-list');
+    document.getElementById('history-actions').style.display = items.length === 0 ? 'none' : 'flex';
+    if (items.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><p>${t('history.empty')}</p></div>`;
+      return;
+    }
+    const catData = getCatData();
+    container.innerHTML = items.map((item, i) => {
+      const cat   = getCategory(item.score);
+      const d     = catData[cat];
+      const date  = new Date(item.createdAt).toLocaleDateString(t('date-locale'), { day:'numeric', month:'short', year:'numeric' });
+      const title = escapeHTML(item.title);
+      const notes = item.notes ? escapeHTML(item.notes) : '';
+      return `<div class="history-item">
+        <div class="history-score ${d.cls}">
+          <div class="history-score-num" style="color:var(--${cat})">${item.score}%</div>
+          <span class="scale-badge badge-${cat}" style="font-size:0.68rem;padding:3px 9px;margin-top:5px;display:inline-block;">${d.label}</span>
+        </div>
+        <div class="history-meta">
+          <h3>${title}</h3>
+          <p>${d.full} &nbsp;·&nbsp; ${date}</p>
+          ${notes ? `<p class="history-notes">${notes}</p>` : ''}
+        </div>
+        <button class="history-delete" data-index="${i}" title="Delete" aria-label="Delete evaluation">✕</button>
+      </div>`;
+    }).join('');
+
+    container.querySelectorAll('.history-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        haptic('warning');
+        const items = loadHistory();
+        items.splice(parseInt(btn.dataset.index), 1);
+        saveHistory(items);
+        renderHistory();
+      });
+    });
+  }
+
+  document.getElementById('btn-save').addEventListener('click', () => {
+    const title = titleInput.value.trim();
+    if (!title) return;
+    haptic('success');
+    const item = {
+      title,
+      notes: document.getElementById('notes-input').value.trim(),
+      suitability:   parseInt(document.getElementById('suit-slider').value),
+      outcome:       parseInt(document.getElementById('out-slider').value),
+      sustainability:parseInt(document.getElementById('sus-slider').value),
+      score: getScore(),
+      createdAt: Date.now()
+    };
+    const items = loadHistory();
+    items.unshift(item);
+    saveHistory(items);
+    renderHistory();
+
+    const toast = document.getElementById('toast');
+    toast.textContent = t('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  });
+
+  // ── Export ──
+  function escapeCSV(val) {
+    return '"' + String(val ?? '').replace(/"/g, '""') + '"';
+  }
+
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const items = loadHistory();
+    const catData = getCatData();
+    const headers = ['Title', 'Suitability', 'Real Outcome', 'Sustainability', 'Score', 'Category', 'Date', 'Notes'];
+    const rows = items.map(item => {
+      const cat = getCategory(item.score);
+      const date = new Date(item.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      return [
+        item.title,
+        item.suitability,
+        item.outcome,
+        item.sustainability,
+        item.score + '%',
+        catData[cat].label,
+        date,
+        item.notes || ''
+      ].map(escapeCSV).join(',');
+    });
+    const csv = [headers.join(','), ...rows].join('\n');
+    const filename = `aem-history-${new Date().toISOString().slice(0,10)}.csv`;
+
+    if (window.webkit?.messageHandlers?.exportJSON) {
+      window.webkit.messageHandlers.exportJSON.postMessage({ json: csv, filename });
+    } else {
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  });
+
+
+  // ── Scroll to top ──
+  const scrollTopBtn = document.getElementById('scroll-top');
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+  }, { passive: true });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  applyTranslations();
+  update();
+  renderHistory();
+</script>
+</body>
+</html>
