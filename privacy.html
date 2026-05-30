@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Privacy Policy — AEM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  (function() {
+    const saved = localStorage.getItem('aem_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f6f4f0;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: rgba(0,0,0,0.08);
+    --text: #1a1917;
+    --muted: #6b6860;
+    --faint: #9b9890;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0f0e0d;
+    --surface: #1a1917;
+    --surface2: #242220;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0ede8;
+    --muted: #9b9890;
+    --faint: #6b6860;
+  }
+
+  html { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 56px;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em;
+    text-decoration: none; color: var(--text);
+  }
+
+  .nav-back {
+    font-size: 0.85rem; color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  main {
+    flex: 1;
+    max-width: 680px; width: 100%;
+    margin: 0 auto;
+    padding: 60px 2rem 80px;
+  }
+
+  .page-title {
+    font-size: 2rem; font-weight: 700; letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-date {
+    font-size: 0.85rem; color: var(--muted); margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.1rem; font-weight: 600; margin: 2.5rem 0 0.75rem;
+  }
+
+  p {
+    font-size: 0.95rem; line-height: 1.75; color: var(--muted); margin-bottom: 0.75rem;
+  }
+
+  ul {
+    margin: 0.5rem 0 0.75rem 1.25rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+
+  li {
+    font-size: 0.95rem; line-height: 1.65; color: var(--muted);
+  }
+
+  .highlight-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .highlight-box p { margin: 0; font-weight: 500; color: var(--text); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem; text-align: center;
+    font-size: 0.8rem; color: var(--faint);
+  }
+
+  footer strong { color: var(--muted); font-weight: 600; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 700px) {
+    main { padding: 40px 1.25rem 60px; }
+    .page-title { font-size: 1.6rem; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">AEM</a>
+  <a class="nav-back" href="/">&#8592; Back</a>
+</nav>
+
+<main>
+  <h1 class="page-title">Privacy Policy</h1>
+  <p class="page-date">Last updated: May 2026</p>
+
+  <div class="highlight-box">
+    <p>AEM does not collect, store, or share any personal data. Everything stays on your device.</p>
+  </div>
+
+  <h2>What AEM does</h2>
+  <p>AEM (Aryam's Effectiveness Metric) is a personal evaluation tool that helps you measure how well habits, methods, or behaviours work for you. All calculations and history are processed and stored locally on your device.</p>
+
+  <h2>Data we do not collect</h2>
+  <p>We do not collect, transmit, or have access to any of the following:</p>
+  <ul>
+    <li>Personal information (name, email, location, etc.)</li>
+    <li>Usage analytics or behaviour tracking</li>
+    <li>Device identifiers or advertising IDs</li>
+    <li>Health, financial, or sensitive personal data</li>
+  </ul>
+
+  <h2>Local storage</h2>
+  <p>AEM stores your evaluation history and preferences (such as theme and language) locally on your device using standard browser/app storage. This data never leaves your device and is not accessible to us or any third party.</p>
+
+  <h2>Third-party services</h2>
+  <p>AEM does not integrate any third-party analytics, advertising networks, or data-sharing services.</p>
+
+  <h2>Children</h2>
+  <p>AEM does not knowingly collect data from anyone, including children under 13. Since no data is collected at all, there is no special handling required.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes in the future, the updated version will be posted at this URL with a revised date. Significant changes will be noted in the app update release notes.</p>
+
+  <h2>Contact</h2>
+  <p>If you have any questions about this privacy policy, you can reach us at <a href="mailto:taylor.cooke93@gmail.com" style="color: var(--muted);">taylor.cooke93@gmail.com</a>.</p>
+</main>
+
+<footer>
+  <p><strong>AEM</strong> — Aryam's Effectiveness Metric &nbsp;·&nbsp; <a href="/">Home</a></p>
+</footer>
+
+</body>
+</html>
