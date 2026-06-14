@@ -10,12 +10,13 @@
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/inter-500.ttf') format('truetype'); }
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/inter-600.ttf') format('truetype'); }
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/inter-700.ttf') format('truetype'); }
-  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/cairo-300.ttf') format('truetype'); }
-  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/cairo-400.ttf') format('truetype'); }
-  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/cairo-500.ttf') format('truetype'); }
-  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/cairo-600.ttf') format('truetype'); }
-  @font-face { font-family: 'Cairo'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/cairo-700.ttf') format('truetype'); }
-</style>
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/Inter-SemiBoldItalic.ttf') format('truetype');
+      }
+  @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/Tajawal-Light.ttf') format('truetype'); }
+  @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/Tajawal-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/Tajawal-Medium.ttf') format('truetype'); }
+  @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/TTajawal-Bold') format('truetype'); }
+
 <script>
   (function() {
     const saved = localStorage.getItem('aem_theme');
@@ -42,16 +43,16 @@
     --muted: #6b6860;
     --faint: #9b9890;
 
-    --failed: #c0392b;
+    --failed: #bd382a;
     --failed-bg: #fdf0ef;
-    --limited: #d35400;
+    --limited: #ce5201;
     --limited-bg: #fef4ec;
-    --moderate: #b8860b;
+    --moderate: #b4830c;
     --moderate-bg: #fefaed;
-    --effective: #27ae60;
+    --effective: #27ab5e;
     --effective-bg: #edfaf3;
-    --ideal: #2471a3;
-    --ideal-bg: #eef5fc;
+    --ideal: #2596be;
+    --ideal-bg: #e8f4fa;
 
     --radius: 16px;
     --radius-sm: 10px;
@@ -86,7 +87,7 @@
   }
 
   html[lang="ar"] body {
-    font-family: 'Cairo', -apple-system, sans-serif;
+    font-family: 'Tajawal', -apple-system, sans-serif;
   }
 
   /* ── NAV ── */
@@ -172,7 +173,7 @@
     background: none;
     border: 1px solid var(--border);
     border-radius: 100px;
-    padding: 0 7px;
+    width: 34px;
     height: 34px;
     display: flex;
     align-items: center;
@@ -180,9 +181,9 @@
     cursor: pointer;
     color: var(--muted);
     font-family: inherit;
-    font-size: 1.1rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: 0.04em;
     transition: color 0.2s, background 0.2s, border-color 0.2s;
     flex-shrink: 0;
   }
@@ -435,8 +436,12 @@
 
   html[lang="ar"] input[type="text"],
   html[lang="ar"] textarea {
-    font-family: 'Cairo', -apple-system, sans-serif;
+    font-family: 'Tajawal', -apple-system, sans-serif;
     text-align: right;
+  }
+
+  html[lang="ar"] input[type="text"].number-input {
+    text-align: center;
   }
 
   input[type="text"]:focus, textarea:focus {
@@ -1404,7 +1409,7 @@
       'nav.compare': 'مقارنة',
       'hero.eyebrow': 'مقياس أريام للفاعلية',
       'hero.h1': 'ما مدى فاعلية<br><em>عادتك، حقاً؟</em>',
-      'hero.desc': 'أداة تقييم شخصية تقيس مدى نجاح أي عادة أو أسلوب أو سلوك فعلياً — من أجل <em>أنت</em>. تستند إلى تجربتك الخاصة، لا إلى الآراء الشائعة.',
+      'hero.desc': 'أداة تقييم شخصية تقيس مدى نجاح أي عادة أو أسلوب أو سلوك فعلياً — من <em>أجلك</em>. تستند إلى تجربتك الخاصة، لا إلى الآراء الشائعة.',
       'hero.tag.habits': 'العادات الصحية',
       'hero.tag.study': 'أساليب الدراسة',
       'hero.tag.productivity': 'الإنتاجية',
@@ -1599,6 +1604,7 @@
       let v = parseInt(numInput.value);
       if (isNaN(v)) v = 0;
       v = Math.min(100, Math.max(0, v));
+      if (parseInt(numInput.value) !== v) numInput.value = v;
       slider.value = v;
       valSpan.textContent = v;
       update();
