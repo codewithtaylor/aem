@@ -6,13 +6,18 @@
 <title>Privacy Policy — AEM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script>
   (function() {
     const saved = localStorage.getItem('aem_theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (saved === 'dark' || (!saved && prefersDark)) {
       document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    const lang = localStorage.getItem('aem_lang') || 'en';
+    if (lang === 'ar') {
+      document.documentElement.setAttribute('lang', 'ar');
+      document.documentElement.setAttribute('dir', 'rtl');
     }
   })();
 </script>
@@ -42,6 +47,7 @@
   }
 
   html { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  html[lang="ar"] { font-family: 'Tajawal', system-ui, sans-serif; }
   body { min-height: 100vh; display: flex; flex-direction: column; }
 
   nav {
@@ -56,11 +62,34 @@
     text-decoration: none; color: var(--text);
   }
 
+  .nav-right {
+    display: flex; align-items: center; gap: 1rem;
+  }
+
   .nav-back {
     font-size: 0.85rem; color: var(--muted); text-decoration: none;
     display: flex; align-items: center; gap: 0.4rem;
   }
   .nav-back:hover { color: var(--text); }
+
+  .lang-toggle {
+    display: flex; align-items: center; gap: 0.25rem;
+    background: var(--surface2); border-radius: 8px; padding: 0.2rem;
+    border: 1px solid var(--border);
+  }
+
+  .lang-btn {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 0.2rem 0.55rem; border-radius: 6px;
+    border: none; background: transparent; cursor: pointer;
+    color: var(--muted); transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+
+  .lang-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
 
   main {
     flex: 1;
@@ -74,6 +103,8 @@
     margin-bottom: 0.5rem;
   }
 
+  html[lang="ar"] .page-title { letter-spacing: 0; }
+
   .page-date {
     font-size: 0.85rem; color: var(--muted); margin-bottom: 2.5rem;
   }
@@ -86,10 +117,14 @@
     font-size: 0.95rem; line-height: 1.75; color: var(--muted); margin-bottom: 0.75rem;
   }
 
+  html[lang="ar"] p, html[lang="ar"] li { line-height: 2; }
+
   ul {
     margin: 0.5rem 0 0.75rem 1.25rem;
     display: flex; flex-direction: column; gap: 0.5rem;
   }
+
+  html[lang="ar"] ul { margin-inline-start: 1.25rem; margin-inline-end: 0; }
 
   li {
     font-size: 0.95rem; line-height: 1.65; color: var(--muted);
@@ -113,6 +148,9 @@
   footer a { color: var(--muted); text-decoration: none; }
   footer a:hover { color: var(--text); }
 
+  .content-en, .content-ar { display: none; }
+  .content-en.active, .content-ar.active { display: block; }
+
   @media (max-width: 700px) {
     main { padding: 40px 1.25rem 60px; }
     .page-title { font-size: 1.6rem; }
@@ -124,48 +162,122 @@
 
 <nav>
   <a class="nav-logo" href="/">AEM</a>
-  <a class="nav-back" href="/">&#8592; Back</a>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">ع</button>
+    </div>
+    <a class="nav-back" id="nav-back" href="/">&#8592; Back</a>
+  </div>
 </nav>
 
 <main>
-  <h1 class="page-title">Privacy Policy</h1>
-  <p class="page-date">Last updated: May 2026</p>
+  <!-- English -->
+  <div class="content-en" id="content-en">
+    <h1 class="page-title">Privacy Policy</h1>
+    <p class="page-date">Last updated: May 2026</p>
 
-  <div class="highlight-box">
-    <p>AEM does not collect, store, or share any personal data. Everything stays on your device.</p>
+    <div class="highlight-box">
+      <p>AEM does not collect, store, or share any personal data. Everything stays on your device.</p>
+    </div>
+
+    <h2>What AEM does</h2>
+    <p>AEM (Aryam's Effectiveness Metric) is a personal evaluation tool that helps you measure how well habits, methods, or behaviours work for you. All calculations and history are processed and stored locally on your device.</p>
+
+    <h2>Data we do not collect</h2>
+    <p>We do not collect, transmit, or have access to any of the following:</p>
+    <ul>
+      <li>Personal information (name, email, location, etc.)</li>
+      <li>Usage analytics or behaviour tracking</li>
+      <li>Device identifiers or advertising IDs</li>
+      <li>Health, financial, or sensitive personal data</li>
+    </ul>
+
+    <h2>Local storage</h2>
+    <p>AEM stores your evaluation history and preferences (such as theme and language) locally on your device using standard browser/app storage. This data never leaves your device and is not accessible to us or any third party.</p>
+
+    <h2>Third-party services</h2>
+    <p>AEM does not integrate any third-party analytics, advertising networks, or data-sharing services.</p>
+
+    <h2>Children</h2>
+    <p>AEM does not knowingly collect data from anyone, including children under 13. Since no data is collected at all, there is no special handling required.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes in the future, the updated version will be posted at this URL with a revised date. Significant changes will be noted in the app update release notes.</p>
+
+    <h2>Contact</h2>
+    <p>If you have any questions about this privacy policy, you can reach us at <a href="mailto:aem.core.effect@gmail.com" style="color: var(--muted);">aem.core.effect@gmail.com</a>.</p>
   </div>
 
-  <h2>What AEM does</h2>
-  <p>AEM (Aryam's Effectiveness Metric) is a personal evaluation tool that helps you measure how well habits, methods, or behaviours work for you. All calculations and history are processed and stored locally on your device.</p>
+  <!-- Arabic -->
+  <div class="content-ar" id="content-ar">
+    <h1 class="page-title">سياسة الخصوصية</h1>
+    <p class="page-date">آخر تحديث: مايو 2026</p>
 
-  <h2>Data we do not collect</h2>
-  <p>We do not collect, transmit, or have access to any of the following:</p>
-  <ul>
-    <li>Personal information (name, email, location, etc.)</li>
-    <li>Usage analytics or behaviour tracking</li>
-    <li>Device identifiers or advertising IDs</li>
-    <li>Health, financial, or sensitive personal data</li>
-  </ul>
+    <div class="highlight-box">
+      <p>لا يجمع تطبيق AEM أي بيانات شخصية أو يخزنها أو يشاركها. كل شيء يبقى على جهازك.</p>
+    </div>
 
-  <h2>Local storage</h2>
-  <p>AEM stores your evaluation history and preferences (such as theme and language) locally on your device using standard browser/app storage. This data never leaves your device and is not accessible to us or any third party.</p>
+    <h2>ما يفعله تطبيق AEM</h2>
+    <p>AEM (مقياس فعالية أريام) هو أداة تقييم شخصية تساعدك على قياس مدى فعالية عاداتك وأساليبك وسلوكياتك. تتم معالجة جميع الحسابات والسجل التاريخي وتخزينها محلياً على جهازك.</p>
 
-  <h2>Third-party services</h2>
-  <p>AEM does not integrate any third-party analytics, advertising networks, or data-sharing services.</p>
+    <h2>البيانات التي لا نجمعها</h2>
+    <p>لا نجمع أياً من البيانات التالية أو ننقلها أو نتمكن من الوصول إليها:</p>
+    <ul>
+      <li>المعلومات الشخصية (الاسم، البريد الإلكتروني، الموقع، إلخ)</li>
+      <li>تحليلات الاستخدام أو تتبع السلوك</li>
+      <li>معرّفات الجهاز أو معرّفات الإعلانات</li>
+      <li>البيانات الصحية أو المالية أو الشخصية الحساسة</li>
+    </ul>
 
-  <h2>Children</h2>
-  <p>AEM does not knowingly collect data from anyone, including children under 13. Since no data is collected at all, there is no special handling required.</p>
+    <h2>التخزين المحلي</h2>
+    <p>يخزّن تطبيق AEM سجل تقييماتك وتفضيلاتك (كالسمة واللغة) محلياً على جهازك باستخدام التخزين القياسي للمتصفح أو التطبيق. لا تغادر هذه البيانات جهازك قط، ولا يمكن لنا أو لأي طرف ثالث الوصول إليها.</p>
 
-  <h2>Changes to this policy</h2>
-  <p>If this policy changes in the future, the updated version will be posted at this URL with a revised date. Significant changes will be noted in the app update release notes.</p>
+    <h2>خدمات الطرف الثالث</h2>
+    <p>لا يدمج تطبيق AEM أي خدمات تحليلات أو شبكات إعلانية أو خدمات مشاركة بيانات تابعة لأطراف ثالثة.</p>
 
-  <h2>Contact</h2>
-  <p>If you have any questions about this privacy policy, you can reach us at <a href="mailto:taylor.cooke93@gmail.com" style="color: var(--muted);">taylor.cooke93@gmail.com</a>.</p>
+    <h2>الأطفال</h2>
+    <p>لا يجمع تطبيق AEM بيانات من أي شخص عن قصد، بما في ذلك الأطفال دون سن 13 عاماً. وبما أنه لا يتم جمع أي بيانات على الإطلاق، فلا توجد معالجة خاصة مطلوبة.</p>
+
+    <h2>التغييرات على هذه السياسة</h2>
+    <p>إذا تغيرت هذه السياسة في المستقبل، سيتم نشر النسخة المحدّثة على هذا الرابط مع تاريخ مراجعة جديد. وستُشار التغييرات الجوهرية في ملاحظات إصدار تحديثات التطبيق.</p>
+
+    <h2>التواصل</h2>
+    <p>إذا كان لديك أي استفسار حول سياسة الخصوصية هذه، يمكنك التواصل معنا على <a href="mailto:aem.core.effect@gmail.com" style="color: var(--muted);">aem.core.effect@gmail.com</a>.</p>
+  </div>
 </main>
 
 <footer>
   <p><strong>AEM</strong> — Aryam's Effectiveness Metric &nbsp;·&nbsp; <a href="/">Home</a></p>
 </footer>
+
+<script>
+  function setLang(lang) {
+    localStorage.setItem('aem_lang', lang);
+    applyLang(lang);
+  }
+
+  function applyLang(lang) {
+    const isAr = lang === 'ar';
+    document.documentElement.setAttribute('lang', isAr ? 'ar' : 'en');
+    document.documentElement.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+
+    document.getElementById('content-en').classList.toggle('active', !isAr);
+    document.getElementById('content-ar').classList.toggle('active', isAr);
+    document.getElementById('btn-en').classList.toggle('active', !isAr);
+    document.getElementById('btn-ar').classList.toggle('active', isAr);
+
+    const back = document.getElementById('nav-back');
+    if (isAr) {
+      back.innerHTML = 'رجوع &#8594;';
+    } else {
+      back.innerHTML = '&#8592; Back';
+    }
+  }
+
+  const savedLang = localStorage.getItem('aem_lang') || 'en';
+  applyLang(savedLang);
+</script>
 
 </body>
 </html>
